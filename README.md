@@ -1,1 +1,3 @@
 # TFG_GII_SistemaVotacionEnLinea
+
+La Ley Orgánica del Régimen Electoral español data de 1985, por lo que en más de 40 años no ha experimentado modificaciones. En este contexto, el presente Trabajo de Fin de Grado propone el diseño e implementación de una aplicación web orientada a la gestión y monitorización de un proceso electoral. El elemento central del proyecto es el desarrollo de un sistema de votación electrónica que sustituya al tradicional basado en urna y papeletas, incorporando mecanismos de identificación y seguridad. Asimismo, la plataforma incluiría un módulo de escrutinio y visualización de resultados para el análisis de los datos electorales.
