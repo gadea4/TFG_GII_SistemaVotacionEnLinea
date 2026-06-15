@@ -8,7 +8,8 @@ lib = pkcs11.lib(r'C:\Program Files\OpenSC Project\OpenSC\pkcs11\opensc-pkcs11.d
 
 for slot in lib.get_slots():
     token = slot.get_token()
-    with token.open(user_pin="0000") as session:
+    pin = input()
+    with token.open(user_pin=pin) as session:
         certs=list(session.get_objects({Attribute.CLASS: ObjectClass.CERTIFICATE}))
         print("Certificado encontrado")
         for cert in certs: 
