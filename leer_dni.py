@@ -9,12 +9,16 @@ LECTOR_OBJETIVO="ACS ACR 3901 ICC READER 0"
 
 def detectar_dni(): 
     lista=readers()
-    if lista: 
+    if not lista: 
+        print("No hay lector")
+        return
+    for lector in lista :
         if str(lector) == LECTOR_OBJETIVO: 
             print ("Lector detectado")
-            return
-    else: 
-        print("No hay lector")
+            return 
+        
+    print ("Lector no encontrado")
+        
 
 if __name__ == "__main__":
     detectar_dni()
