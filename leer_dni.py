@@ -5,7 +5,7 @@
 # Pregunta al sistema operativo que lectores hay conectados y devuelva una lista con ellos 
 
 from smartcard.System import readers 
-LECTOR_OBJETIVO="ACS ACR 3901 ICC READER 0"
+LECTOR_OBJETIVO="ACS ACR3901 ICC Reader 0"
 
 def detectar_dni(): 
     lista=readers()
@@ -13,7 +13,7 @@ def detectar_dni():
         print("No hay lector")
         return
     for lector in lista :
-        if str(lector) == LECTOR_OBJETIVO: 
+        if str(lector).strip() == LECTOR_OBJETIVO: 
             print ("Lector detectado")
             return 
         
