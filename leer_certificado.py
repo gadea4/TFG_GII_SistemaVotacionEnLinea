@@ -3,6 +3,8 @@
 
 import pkcs11
 from pkcs11 import ObjectClass, Attribute 
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 import sys
 
 lib = pkcs11.lib(r'C:\Program Files\OpenSC Project\OpenSC\pkcs11\opensc-pkcs11.dll')
@@ -23,5 +25,9 @@ pin = input()
 with token.open(user_pin=pin) as session:
         certs=list(session.get_objects({Attribute.CLASS: ObjectClass.CERTIFICATE}))
         print("Certificado encontrado")
-        for cert in certs: 
-            print(cert[Attribute.VALUE])
+        for cert in certs:
+            cert_der=cert[Attribute.VALUE]
+            x509_cert=x509.load_der_x509_certificate(cert_der, default_backend())
+            subject=x509_cert.subject
+            for attr in subject: 
+                 print(attr.oid._name, attr.value)
