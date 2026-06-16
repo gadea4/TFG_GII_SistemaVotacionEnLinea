@@ -30,4 +30,6 @@ with token.open(user_pin=pin) as session:
             x509_cert=x509.load_der_x509_certificate(cert_der, default_backend())
             subject=x509_cert.subject
             for attr in subject: 
-                 print(attr.oid._name, attr.value)
+                if attr.oid._name == "commonName":
+                 partes = attr.value.split(" ")
+                 print(partes)
