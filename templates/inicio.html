@@ -1,50 +1,54 @@
 <!DOCTYPE html>
-<html lang = "es"> 
-    <head>
-        <meta charset="UTF-8"> 
-        <title>Bienvenida-Sistema de Votación</title>
-    </head>
-    <body> 
-    <!-- Usamos div para crear "cajas" donde se agrupa información
-     La clase nos permite añadir una etiqueta a esa caja para organizar bien la info-->
-        <div class="hdr-top">
-            <div class="hdr-top-izq">
-                <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
-            </div> 
-            <div class="hdr-top-der">
-                <div class="hdr-hora" id="hora"></div>
-                <div class="hdr-dia" id="dia"></div>
-            </div>
-       </div>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenida — Sistema de Votación</title>
+</head>
+<body>
 
-       <div class="hdr-titulo">
-         <h1>Sistema de Votación Electrónica</h1>
-         <p id="fecha-hdr"></p>
-       </div>
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
+    </div>
+  </div>
 
-       <div class ="contenido">
+  <div class="hdr-titulo">
+    <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
+  </div>
 
-        <div class="tabs">
-            <div class="tab">Inicio</div>
+  <div class="contenido">
+
+    <div class="tabs">
+      <div class="tab">Inicio</div>
+      <a href="/login_admin">⚙ Administración</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Bienvenido al Sistema de Votación Electrónica</div>
+
+      <div class="bienvenida-panel">
+        <div class="bienvenida-centro">
+          <a href="/pasos" class="btn-primario">Comenzar</a>
+          <div class="bienvenida-sub">Pulse en <strong>Comenzar</strong> para iniciar el proceso de votación.</div>
         </div>
+      </div>
+    </div>
 
-        <div class="panel">
-            <div class = "panel-titulo">Bienvenido al sistema de Votación Electrónica</div>
+  </div>
 
-            <div class="Bienvenida-panel">
-                <div class="Bienvenida-centro">
-                    <a href="/pasos" class="btn-primario">Comenzar</a>
-                    <div class = "bienvenida-sub">Pulse en Comenzar para iniciar el proceso de votación.</div>
-                </div>
-            </div>
-        </div>
-             
-        </div>
-
-        <div class="Bienvenida-aviso-base">
-            Tenga a mano su DNI y su contraseña del certificado antes de iniciar el proceso.
-        </div>
- 
-    </body>
+    <div class="Bienvenida-aviso-base"
+    <strong>Información:</strong> tenga a mano su <strong>DNI</strong> y su <strong>constraseña del certificado</strong> antes de iniciar el proceso.
+    </div>
+</body>
 </html>
+
+
+
+
+
 
