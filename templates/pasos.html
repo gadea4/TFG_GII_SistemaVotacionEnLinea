@@ -7,7 +7,13 @@
 <body>
 
   <div class="hdr-top">
-    <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"> </div>
+       <div class="hdr-dia" id="dia"> </div>
+    </div>
   </div>
 
   <div class="hdr-titulo">
@@ -22,24 +28,38 @@
 
     <div class="panel">
       <div class="panel-titulo">Pasos del proceso</div>
-
       <div class="panel-body">
 
         <div class="pasos-lista">
 
           <div class="paso-item">
-            <div class="paso-num">1</div>
-            <div class="paso-titulo">Identificación del votante</div>
+            <div class ="pasos-num-wrap">
+               <div class="paso-num">1</div>
+               <div class="paso-conector"></div>
+            </div>
+            <div class="pasos-txt">
+               <div class="paso-titulo">Identificación del votante</div>
+            </div>
           </div>
 
           <div class="paso-item">
-            <div class="paso-num">2</div>
-            <div class="paso-titulo">Validación del derecho a voto</div>
+             <div class ="pasos-num-wrap">
+               <div class="paso-num">2</div>
+               <div class="paso-conector"></div>
+              </div>
+            <div class="pasos-txt">
+               <div class="paso-titulo">Validación del derecho a voto</div>
+            </div>
           </div>
 
           <div class="paso-item">
-            <div class="paso-num">3</div>
-            <div class="paso-titulo">Votación a candidaturas</div>
+            <div class ="pasos-num-wrap">
+               <div class="paso-num">3</div>
+               <div class="paso-conector"></div>
+            </div>
+            <div class ="pasos-txt">
+               <div class="paso-titulo">Votación a candidaturas</div>
+            </div>
           </div>
 
         </div>
@@ -47,6 +67,10 @@
         <div class="zona-boton">
             <a href="/dni" class ="btn-primario">Siguiente</a>
         </div>
+        </div>
+        </div>
+        <div class = "aviso-info">
+          <strong> Información:</strong> tenga a manu su <strong>DNI</strong> y su <strong> contraseña del certificado</strong> antes de inicar el proceso.
         </div>
         </div>
     </body>
