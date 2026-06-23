@@ -7,11 +7,18 @@
 <body>
 
   <div class="hdr-top">
-    <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
+    </div>
   </div>
 
   <div class="hdr-titulo">
     <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
   </div>
 
   <div class="contenido">
@@ -22,20 +29,68 @@
 
     <div class="panel">
       <div class="panel-titulo">Identificación mediante DNI electrónico</div>
-
       <div class="panel-body">
 
         <div class="progreso">
+
           <div class="prog-item">
-            <div class="prog-bola">1</div>
-            <div class="prog-titulo">Insertar DNI</div>
+            <div class="prog-izq">
+              <div class="prog-bola" id="bola-a">1</div>
+              <div class="prog-linea" id="linea-a"></div>
+            </div>
+            <div class="prog-der">
+              <div class="prog-titulo" id="titulo-a">Insertar DNI</div>
+              <div class="prog-sub" id="sub-a">Introduzca su DNI en el lector</div>
+            </div>
           </div>
+
+          <div class="prog-item">
+            <div class="prog-izq">
+              <div class="prog-bola" id="bola-b">2</div>
+              <div class="prog-linea" id="linea-b"></div>
+            </div>
+            <div class="prog-der">
+              <div class="prog-titulo" id="titulo-b">Contraseña</div>
+              <div class="prog-sub" id="sub-b">Introduzca código PIN del certificado</div>
+            </div>
+          </div>
+
+          <div class="prog-item">
+            <div class="prog-izq">
+              <div class="prog-bola" id="bola-c">3</div>
+              <div class="prog-linea" id="linea-c"></div>
+            </div>
+            <div class="prog-der">
+              <div class="prog-titulo" id="titulo-c">Leer certificado</div>
+              <div class="prog-sub" id="sub-c">Verificando datos con el certificado digital</div>
+            </div>
+          </div>
+
+          <div class="prog-item">
+            <div class="prog-izq">
+              <div class="prog-bola" id="bola-d">4</div>
+              <div class="prog-linea" id="linea-d"></div>
+            </div>
+            <div class="prog-der">
+              <div class="prog-titulo" id="titulo-d">Extraer datos</div>
+              <div class="prog-sub" id="sub-d">Datos obtenidos correctamente</div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="zona-boton">
-          <button class="btn-primario">Comprobar DNI </button>
+        <div class="zona-boton" id="zona-boton-principal">
+          <button id="btn-comprobar"> &nbsp;Comprobar DNI</button>
         </div>
+
+      </div>
     </div>
+
+    <div class="aviso-info">
+      <strong> Información: </strong> Introduzca su DNI en el lector y pulse sobre el botón "Comprobar DNI"
     </div>
-</body>
-</html>
+  </div>
+  </body>
+  </html>
+
+  
