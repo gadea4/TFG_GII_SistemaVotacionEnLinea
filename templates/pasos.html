@@ -3,21 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <title>Pasos — Sistema de Votación</title>
+  <style>/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --azul: #3a7abf;
+  --azul-oscuro: #2a5a9f;
+  --azul-fondo: #f0f6ff;
+  --azul-borde: #c0d8f0;
+  --gris-cabecera: #4a4a4a;
+  --gris-cabecera2: #5a5a5a;
+  --gris-borde: #ddd;
+  --gris-fondo: #e8e8e8;
+  --gris-panel: #f7f9fc;
+  --verde: #2e8b57;
+  --verde-fondo: #f0fff4;
+  --verde-borde: #a8d5b8;
+  --rojo: #c0392b;
+  --rojo-fondo: #fff5f5;
+  --rojo-borde: #f5b8b0;
+  --negro: #222;
+  --blanco: #fff;
+  --texto: #333;
+  --texto-suave: #666;
+  --texto-muy-suave: #aaa;
+}
+
+body {
+  font-family: Arial, 'Helvetica Neue', sans-serif;
+  background: var(--gris-fondo);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--texto);
+  font-size: 16px;
+  overflow: hidden;
+}
+
+/* CABECERA */
+.hdr-top {
+  background: var(--gris-cabecera);
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.hdr-top-izq { display: flex; align-items: center; gap: 14px; }
+.hdr-escudo { font-size: 34px; }
+.hdr-top-txt { font-size: 16px; color: rgba(255,255,255,0.85); letter-spacing: 0.02em; }
+.hdr-top-der { display: flex; flex-direction: column; align-items: flex-end; }
+.hdr-hora { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.85); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.hdr-dia { font-size: 13px; color: rgba(255,255,255,0.45); }
+
+.hdr-titulo {
+  background: var(--gris-cabecera2);
+  padding: 20px 40px;
+  text-align: center;
+  border-bottom: 4px solid var(--azul);
+  flex-shrink: 0;
+}
+.hdr-titulo h1 { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; }
+.hdr-titulo p { font-size: 15px; color: rgba(255,255,255,0.65); }
+
+/* CONTENIDO */
+.contenido {
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+  overflow: auto;
+}
+
+/* TABS */
+.tabs { background: var(--blanco); border-bottom: 2px solid var(--gris-borde); padding: 0 4px; display: flex; flex-shrink: 0; }
+.tab { padding: 14px 24px; font-size: 14px; font-weight: 700; color: var(--azul); border-bottom: 3px solid var(--azul); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: -2px; }
+
+/* PANEL */
+.panel { background: var(--blanco); border: 1px solid #ccc; border-radius: 2px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.panel-titulo { text-align: center; padding: 14px 20px; font-size: 14px; font-weight: 700; color: var(--azul); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--gris-borde); background: var(--gris-panel); flex-shrink: 0; }
+.panel-body { padding: 28px 36px; flex: 1; overflow: auto; display: flex; flex-direction: column; justify-content: center; }
+
+/* INSTRUCCION */
+.instruccion { font-size: 15px; color: #444; line-height: 1.6; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid #eee; }
+
+/* PASO BADGE */
+.paso-badge { display: inline-block; font-size: 13px; color: var(--texto-suave); background: #f0f0f0; border: 1px solid var(--gris-borde); padding: 4px 12px; border-radius: 2px; margin-bottom: 14px; }
+.paso-badge strong { color: var(--azul); }
+
+/* BOTONES */
+.btn-primario {
+  padding: 16px 48px; background: var(--azul); color: var(--blanco);
+  font-size: 18px; font-weight: 700; border: none; border-radius: 2px; cursor: pointer;
+  letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primario:hover { background: var(--azul-oscuro); }
+.btn-primario:active { transform: scale(0.99); }
+.btn-primario:disabled, .btn-primario.inactivo { opacity: 0.35; pointer-events: none; }
+
+.btn-secundario {
+  padding: 14px 36px; background: var(--blanco); color: var(--texto-suave);
+  font-size: 16px; font-weight: 700; border: 1px solid var(--gris-borde); border-radius: 2px;
+  cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-secundario:hover { background: #f5f5f5; }
+
+.btn-verde {
+  padding: 16px 48px; background: var(--verde); color: var(--blanco);
+  font-size: 18px; font-weight: 700; border: none; border-radius: 2px; cursor: pointer;
+  letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-verde:hover { background: #1f6b42; }
+
+/* AVISOS */
+.aviso-info { background: var(--azul-fondo); border: 1px solid var(--azul-borde); border-left: 4px solid var(--azul); padding: 14px 18px; font-size: 14px; color: #2a5080; line-height: 1.6; border-radius: 0 2px 2px 0; flex-shrink: 0; }
+.aviso-ok { background: var(--verde-fondo); border: 1px solid var(--verde-borde); border-left: 4px solid var(--verde); padding: 22px 24px; font-size: 16px; color: #1a5a35; line-height: 1.6; border-radius: 0 2px 2px 0; display: flex; flex-direction: column; gap: 16px; }
+.aviso-ok-titulo { font-size: 20px; font-weight: 700; }
+.aviso-error { background: var(--rojo-fondo); border: 1px solid var(--rojo-borde); border-left: 4px solid var(--rojo); padding: 22px 24px; font-size: 16px; color: #7a1a0a; line-height: 1.6; border-radius: 0 2px 2px 0; display: flex; flex-direction: column; gap: 16px; }
+.aviso-error-titulo { font-size: 20px; font-weight: 700; }
+
+/* SPINNER */
+.spinner-wrap { display: flex; align-items: center; gap: 18px; padding: 20px 0; }
+.spinner { width: 38px; height: 38px; border-radius: 50%; border: 4px solid var(--azul-borde); border-top-color: var(--azul); animation: girar 0.8s linear infinite; flex-shrink: 0; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.spinner-txt { font-size: 16px; color: var(--texto-suave); line-height: 1.5; }
+.spinner-txt strong { color: var(--negro); }
+
+/* PIE */
+.pie { background: var(--gris-cabecera); padding: 14px 40px; text-align: center; font-size: 13px; color: rgba(255,255,255,0.35); letter-spacing: 0.04em; flex-shrink: 0; }
+
+.oculto { display: none !important; }
+@keyframes aparecer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.animar { animation: aparecer 0.3s ease both; }
+</style>
+  <style>
+    .pasos-lista { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: 2px; overflow: hidden; margin-bottom: 28px; width: fit-content; min-width: 400px; margin-left: calc(50% - 200px); margin-right: auto; }
+
+    .paso-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 24px;
+      border-bottom: 1px solid #eee;
+    }
+    .paso-item:last-child { border-bottom: none; }
+
+    .paso-num-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-shrink: 0;
+      align-self: center;
+    }
+    .paso-num {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: var(--azul);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .paso-conector {
+      display: none;
+    }
+    .paso-item:last-child .paso-conector { display: none; }
+
+    .paso-txt { flex: 1; padding-top: 0; display: flex; align-items: center; }
+    .paso-titulo { font-size: 20px; font-weight: 700; color: var(--negro); margin-bottom: 6px; }
+    .paso-desc { font-size: 15px; color: var(--texto-suave); line-height: 1.5; }
+
+    .zona-boton {
+      display: flex;
+      justify-content: center;
+      padding-top: calc(16px + 5.5cm);
+      padding-left: 25cm;
+    }
+    .zona-boton .btn-primario {
+      padding: 10px 28px;
+      font-size: 14px;
+      text-transform: none;
+    }
+    .instruccion { text-align: center; }
+  </style>
 </head>
 <body>
 
   <div class="hdr-top">
     <div class="hdr-top-izq">
-      <div class="hdr-top-txt">Universidad de Burgos · Grado en Ingeniería Informática</div>
+      <div class="hdr-escudo">🎓</div>
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
     </div>
     <div class="hdr-top-der">
-      <div class="hdr-hora" id="hora"> </div>
-       <div class="hdr-dia" id="dia"> </div>
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
     </div>
   </div>
 
   <div class="hdr-titulo">
     <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
   </div>
 
   <div class="contenido">
@@ -30,48 +223,64 @@
       <div class="panel-titulo">Pasos del proceso</div>
       <div class="panel-body">
 
-        <div class="pasos-lista">
+<div class="pasos-lista">
 
           <div class="paso-item">
-            <div class ="pasos-num-wrap">
-               <div class="paso-num">1</div>
-               <div class="paso-conector"></div>
+            <div class="paso-num-wrap">
+              <div class="paso-num">1</div>
+              <div class="paso-conector"></div>
             </div>
-            <div class="pasos-txt">
-               <div class="paso-titulo">Identificación del votante</div>
+            <div class="paso-txt">
+              <div class="paso-titulo">Identificación del votante</div>
             </div>
           </div>
 
           <div class="paso-item">
-             <div class ="pasos-num-wrap">
-               <div class="paso-num">2</div>
-               <div class="paso-conector"></div>
-              </div>
-            <div class="pasos-txt">
-               <div class="paso-titulo">Validación del derecho a voto</div>
+            <div class="paso-num-wrap">
+              <div class="paso-num">2</div>
+              <div class="paso-conector"></div>
+            </div>
+            <div class="paso-txt">
+              <div class="paso-titulo">Validación del derecho a voto</div>
             </div>
           </div>
 
           <div class="paso-item">
-            <div class ="pasos-num-wrap">
-               <div class="paso-num">3</div>
-               <div class="paso-conector"></div>
+            <div class="paso-num-wrap">
+              <div class="paso-num">3</div>
+              <div class="paso-conector"></div>
             </div>
-            <div class ="pasos-txt">
-               <div class="paso-titulo">Votación a candidaturas</div>
+            <div class="paso-txt">
+              <div class="paso-titulo">Votación a candidaturas</div>
             </div>
           </div>
 
         </div>
 
         <div class="zona-boton">
-            <a href="/dni" class ="btn-primario">Siguiente</a>
+          <a href="/dni" class="btn-primario">▶ &nbsp;Siguiente</a>
         </div>
-        </div>
-        </div>
-        <div class = "aviso-info">
-          <strong> Información:</strong> tenga a manu su <strong>DNI</strong> y su <strong> contraseña del certificado</strong> antes de inicar el proceso.
-        </div>
-        </div>
-    </body>
-   </html> 
+
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <strong>ℹ Información:</strong> tenga a mano su <strong>DNI</strong> y su <strong>contraseña del certificado</strong> antes de iniciar el proceso.
+    </div>
+
+  </div>
+
+
+  <script>
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+  tick(); setInterval(tick,1000); 
+  </script>
+</body>
+</html>
+
