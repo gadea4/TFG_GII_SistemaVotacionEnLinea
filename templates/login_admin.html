@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración — Sistema de Votación</title>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia"  id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+    <div class="login-box">
+      <div class="login-titulo">Acceso administración</div>
+
+      <div class="campo">
+        <label>Usuario</label>
+        <input type="text" id="usuario" placeholder="Introduzca usuario" onkeydown="if(event.key==='Enter') document.getElementById('password').focus()">
+      </div>
+
+      <div class="campo">
+        <label>Contraseña</label>
+        <input type="password" id="password" placeholder="Introduzca contraseña" onkeydown="if(event.key==='Enter') acceder()">
+      </div>
+
+      <div class="error-msg" id="error-msg">
+        Usuario o contraseña incorrectos.
+      </div>
+
+      <button class="btn-login" onclick="acceder()">▶ &nbsp;Acceder</button>
+
+      <div class="volver">
+        <a href="/">← Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+
