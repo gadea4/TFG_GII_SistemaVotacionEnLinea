@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración — Sistema de Votación</title>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Panel de Administración</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+
+    <div class="tabs" style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="tab">Administración</div>
+      <a href="/api/logout_admin" id="link-logout" style="font-size:11px; color:rgba(0,0,0,0.75); text-decoration:none; letter-spacing:0.04em; padding:0 16px;" onclick="cerrarSesion(event)">⏻ Cerrar sesión</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Seleccione una sección</div>
+      <div class="admin-panel">
+
+        <div class="admin-grid">
+          <a href="/votacion_admin" class="admin-card" style="grid-column: 1; grid-row: 1;">
+            <div class="admin-card-txt">Votación</div>
+          </a>
+          <a href="/simulacion" class="admin-card" style="grid-column: 2; grid-row: 1;">
+            <div class="admin-card-txt">Simulación</div>
+          </a>
+          <a href="/dhont" class="admin-card" style="grid-column: 2; grid-row: 2;">
+            <div class="admin-card-txt">Ley d'Hont</div>
+          </a>
+          <a href="/documentacion" class="admin-card" style="grid-column: 2; grid-row: 3;">
+            <div class="admin-card-txt">Documentación</div>
+          </a>
+          <a href="/auditoria" class="admin-card" style="grid-column: 3; grid-row: 1;">
+            <div class="admin-card-txt">Auditoría</div>
+          </a>
+          <a href="/bbdd" class="admin-card" style="grid-column: 3; grid-row: 2;">
+            <div class="admin-card-txt">BBDD</div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="admin-aviso-base">
+    <strong>ℹ Información:</strong> panel de administración del Sistema de Votación Electrónica. Acceso restringido.
+  </div>
+
+</body>
+</html>
+
