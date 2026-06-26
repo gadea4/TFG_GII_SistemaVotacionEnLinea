@@ -1,0 +1,135 @@
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+
+    <div class="tabs">
+      <div class="tab">Paso 3 de 3 — Votación a candidaturas</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Emita su voto{% if nombre %} — {{ nombre }}{% endif %}</div>
+      <div class="panel-body">
+
+        <div class="panel-body-fila">
+        <div class="panel-body-izq">
+        <div class="cands-titulo">Candidaturas</div>
+
+        <div class="cands" id="cands">
+
+          <div id="lista-partidos"></div>
+
+          <div class="sep-row">
+            <div class="sep-line"></div>
+            <div class="sep-txt">o bien</div>
+            <div class="sep-line"></div>
+          </div>
+
+          <div class="cand" onclick="sel(this,'Voto en blanco')">
+            <div class="cand-radio"><div class="cand-punto"></div></div>
+            <div class="cand-num">—</div>
+            <div class="cand-nombre">Voto en blanco</div>
+          </div>
+
+          <div class="cand" onclick="sel(this,'Voto nulo')">
+            <div class="cand-radio"><div class="cand-punto"></div></div>
+            <div class="cand-num">—</div>
+            <div class="cand-nombre">Voto nulo</div>
+          </div>
+
+        </div>
+        </div>
+
+        <div class="panel-body-der">
+        <div class="panel-candidatos" id="panel-candidatos">
+          <div class="cand-lista-titulo" id="cand-lista-titulo">Candidatos</div>
+          <div id="lista-titulares"></div>
+          <div class="cand-lista-sep">Suplentes</div>
+          <div id="lista-suplentes"></div>
+        </div>
+        </div>
+        </div>
+
+        <!-- PANEL CONFIRMACIÓN -->
+        <div class="panel-confirmacion" id="panel-confirmacion">
+          <div class="confirm-ok-icono">✔</div>
+          <div>
+            <div class="confirm-ok-txt">Voto emitido correctamente</div>
+            <div class="confirm-ok-sub">Su voto ha sido registrado de forma segura y anónima</div>
+          </div>
+          <div class="confirm-datos">
+            <div class="confirm-dato-row"><span class="confirm-dato-label">Votante</span><span class="confirm-dato-val" id="conf-nombre">—</span></div>
+            <div class="confirm-dato-row"><span class="confirm-dato-label">DNI</span><span class="confirm-dato-val" id="conf-dni">—</span></div>
+            <div class="confirm-dato-row"><span class="confirm-dato-label">Mesa electoral</span><span class="confirm-dato-val" id="conf-mesa">—</span></div>
+            <div class="confirm-dato-row"><span class="confirm-dato-label">Fecha y hora</span><span class="confirm-dato-val" id="conf-fecha">—</span></div>
+            <div class="confirm-dato-row"><span class="confirm-dato-label">Justificante nº</span><span class="confirm-dato-val" id="conf-codigo">—</span></div>
+          </div>
+          <div class="confirm-email-wrap" id="confirm-email-wrap">
+            <button class="btn-pdf" id="btn-mostrar-form-email" onclick="mostrarFormularioEmail()">
+              ✉ &nbsp;Enviar justificante por eMail
+            </button>
+
+            <div class="form-email oculto" id="form-email">
+              <label class="form-email-label" for="input-email">Correo electrónico</label>
+              <input type="email" id="input-email" class="form-email-input" placeholder="ejemplo@correo.com" autocomplete="off">
+
+              <label class="form-email-label" for="input-email-confirmacion">Repita el correo electrónico</label>
+              <input type="email" id="input-email-confirmacion" class="form-email-input" placeholder="ejemplo@correo.com" autocomplete="off">
+
+              <div class="form-email-msg oculto" id="form-email-msg"></div>
+
+              <div class="form-email-btns">
+                <button class="btn-pdf" id="btn-enviar-email" onclick="enviarCertificadoEmail()">Enviar</button>
+                <button class="btn-secundario-email" onclick="ocultarFormularioEmail()">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="zona-btnvotar" style="display:flex; justify-content:flex-end; padding-right:40px; flex-shrink:0; margin-top:8px;">
+      <button id="btnvotar" style="display:inline-flex;align-items:center;gap:8px;padding:10px 32px;background:#3a7abf;color:white;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border:none;border-radius:2px;cursor:not-allowed;text-transform:none;white-space:nowrap;opacity:0.35;" onclick="abrirModal()">&#9658; &nbsp;Emitir voto</button>
+    </div>
+
+    <div class="zona-boton" id="zona-btn-finalizar" style="display:none;">
+      <a href="/" class="btn-primario" onclick="TTS.cancelar()">▶ &nbsp;Finalizar</a>
+    </div>
+
+    <div class="aviso-info">
+      ⚠ Su voto es secreto e irrevocable una vez confirmado.
+    </div>
+
+  </div>
+
+
+  <!-- MODAL -->
+  <div id="modal" class="modal-fondo oculto">
+    <div class="modal">
+      <div class="modal-titulo">Confirmar voto</div>
+      <div class="modal-sub">Va a emitir su voto a la siguiente candidatura. Esta acción es <strong>irreversible</strong>.</div>
+      <div class="modal-cand" id="modal-cand">—</div>
+      <div class="modal-btns">
+        <button class="btn-secundario" onclick="cerrarModal()">✖ &nbsp;Cancelar</button>
+        <button class="btn-verde" onclick="emitirVoto()">✔ &nbsp;Confirmar voto </button>
+      </div>
+    </div>
+</div>
+
+
