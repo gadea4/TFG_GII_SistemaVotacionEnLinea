@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración — Sistema de Votación</title>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia"  id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <div>
+      <h1>Administración — Votación</h1>
+      <p id="fecha-hdr"></p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <a href="/admin_panel" class="btn-logout">← &nbsp;Volver al panel</a>
+      <a href="/auditoria" class="btn-logout" style="border-color: var(--azul); color: var(--azul);">🔍 &nbsp;Auditoría de votos</a>
+      <a href="/api/logout_admin" class="btn-logout" onclick="cerrarSesion(event)">⏻ &nbsp;Cerrar sesión</a>
+    </div>
+  </div>
+
+  <div class="contenido">
+
+    <!-- ESTADÍSTICAS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total votantes</div>
+        <div class="stat-valor" id="stat-total">—</div>
+        <div class="stat-sub">Inscritos en el censo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Votos emitidos</div>
+        <div class="stat-valor" id="stat-votados">—</div>
+        <div class="stat-sub">Voto registrado</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Participación</div>
+        <div class="stat-valor" id="stat-participacion">—</div>
+        <div class="stat-sub">% sobre el censo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-valor" id="stat-pendientes">—</div>
+        <div class="stat-sub">Sin votar aún</div>
+      </div>
+    </div>
+
+    <!-- RESULTADOS POR CANDIDATURA -->
+    <div class="seccion">
+      <div class="seccion-titulo">📊 Resultados por candidatura</div>
+      <div class="seccion-body">
+        <table class="tabla-resultados">
+          <thead>
+            <tr>
+              <th>Candidatura</th>
+              <th>Votos</th>
+              <th>%</th>
+              <th>Distribución</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-resultados-body">
+            <tr><td colspan="4" style="color:#999; text-align:center; padding:20px;">Cargando resultados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GESTIÓN DEL CENSO -->
+    <div class="seccion">
+      <div class="seccion-titulo">🗂 Gestión del censo electoral</div>
+      <div class="seccion-body">
+        <div style="font-size:13px; color:var(--texto-suave);">
+          Herramientas para gestionar el estado del censo y los votos registrados.
+        </div>
+        <div class="acciones">
+          <button class="btn-accion btn-naranja" onclick="confirmarAccion('resetear_votos')">
+            ↺ &nbsp;Resetear todos los votos
+          </button>
+          <button class="btn-accion btn-azul" onclick="cargarEstadisticas()">
+            ⟳ &nbsp;Actualizar estadísticas
+          </button>
+        </div>
+        <div class="msg" id="msg-censo"></div>
+      </div>
+    </div>
+
+    <!-- BASES DE DATOS -->
+    <div class="seccion">
+      <div class="seccion-titulo">🗄 Bases de datos</div>
+      <div class="seccion-body">
+        <div style="font-size:13px; color:var(--texto-suave);">
+          Regenerar las bases de datos del sistema. <strong>Atención:</strong> esta acción eliminará todos los datos actuales.
+        </div>
+        <div class="acciones">
+          <button class="btn-accion btn-rojo" onclick="confirmarAccion('regenerar_censo')">
+            ⚠ &nbsp;Regenerar censo
+          </button>
+          <button class="btn-accion btn-rojo" onclick="confirmarAccion('regenerar_candidaturas')">
+            ⚠ &nbsp;Regenerar candidaturas
+          </button>
+        </div>
+        <div class="msg" id="msg-bd"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL CONFIRMACIÓN -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-box">
+      <div class="modal-titulo" id="modal-confirm-titulo">Confirmar acción</div>
+      <div class="modal-sub"   id="modal-confirm-sub">¿Está seguro de que desea realizar esta acción?</div>
+      <div class="modal-btns">
+        <button class="btn-sm" style="background:#eee;color:#333;" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-sm btn-rojo" id="modal-confirm-btn" onclick="ejecutarAccion()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+
