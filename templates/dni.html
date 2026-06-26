@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Identificación — Sistema de Votación</title>
 </head>
 <body>
@@ -31,16 +32,19 @@
       <div class="panel-titulo">Identificación mediante DNI electrónico</div>
       <div class="panel-body">
 
+        <div class="panel-body-fila">
+        <div class="panel-body-izq">
+        <!-- PROGRESO -->
         <div class="progreso">
 
           <div class="prog-item">
             <div class="prog-izq">
-              <div class="prog-bola" id="bola-a">1</div>
+              <div class="prog-bola activo" id="bola-a">1</div>
               <div class="prog-linea" id="linea-a"></div>
             </div>
             <div class="prog-der">
-              <div class="prog-titulo" id="titulo-a">Insertar DNI</div>
-              <div class="prog-sub" id="sub-a">Introduzca su DNI en el lector</div>
+              <div class="prog-titulo activo" id="titulo-a">Insertar DNI</div>
+              <div class="prog-sub activo" id="sub-a">Introduzca su DNI en el lector</div>
             </div>
           </div>
 
@@ -78,19 +82,98 @@
           </div>
 
         </div>
+        </div>
+
+        <div class="panel-body-der">
+        <!-- ZONAS DINÁMICAS -->
+        <div id="zona-dni" class="oculto"></div>
+
+        <div id="zona-pass" class="accion-bloque oculto" style="width:100%; max-width:260px;">
+          <div class="accion-label">Contraseña del certificado (PIN del DNIe)</div>
+          <input type="password" id="input-pass" style="width:100%;max-width:200px;padding:8px 10px;border:3px solid #c0392b;border-radius:2px;font-size:17px;letter-spacing:0.08em;outline:none;box-sizing:border-box;" placeholder="Introduzca su PIN" onkeydown="if(event.key==='Enter') avanzarALectura()">
+        </div>
+
+        <div id="zona-leyendo" class="oculto" style="width:100%; max-width:260px;">
+          <div class="spinner-wrap">
+            <div class="spinner"></div>
+            <div class="spinner-txt"><strong>Leyendo el certificado...</strong><br>Por favor, no retire el DNI del lector.</div>
+          </div>
+        </div>
+
+        <div id="zona-datos" class="oculto" style="width:100%; max-width:260px;">
+          <div style="font-size:16px;font-weight:700;color:#2e8b57;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">✔ Datos extraídos</div>
+          <table style="width:100%;border-collapse:collapse;font-size:16px;">
+            <tr><td style="padding:4px 6px;background:#e8f5ee;color:#1a5a35;font-weight:700;font-size:14px;text-transform:uppercase;border:1px solid #a8d5b8;width:80px;">Nombre</td><td style="padding:4px 6px;background:#f0fff4;color:#1a5a35;border:1px solid #a8d5b8;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="dato-nombre">—</td></tr>
+            <tr><td style="padding:4px 6px;background:#e8f5ee;color:#1a5a35;font-weight:700;font-size:14px;text-transform:uppercase;border:1px solid #a8d5b8;">Apellidos</td><td style="padding:4px 6px;background:#f0fff4;color:#1a5a35;border:1px solid #a8d5b8;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="dato-apellidos">—</td></tr>
+            <tr><td style="padding:4px 6px;background:#e8f5ee;color:#1a5a35;font-weight:700;font-size:14px;text-transform:uppercase;border:1px solid #a8d5b8;">DNI</td><td style="padding:4px 6px;background:#f0fff4;color:#1a5a35;border:1px solid #a8d5b8;" id="dato-dni">—</td></tr>
+          </table>
+          <div style="font-size:14px;color:#888;margin-top:8px;margin-bottom:10px;">Datos extraídos del certificado digital</div>
+        </div>
+        </div>
+        </div>
+
+        <div id="zona-error" class="oculto" style="position:absolute; top:20px; left:36px; right:36px;">
+          <div class="aviso-error">
+            <div class="aviso-error-titulo">⚠ Error de lectura</div>
+            <div id="error-msg">Error al leer el certificado.</div>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn-primario" onclick="reiniciar()">↺ &nbsp;Intentar de nuevo</button>
+          </div>
+        </div>
 
         <div class="zona-boton" id="zona-boton-principal">
-          <button id="btn-comprobar"> &nbsp;Comprobar DNI</button>
+          <button id="btn-comprobar" style="display:inline-flex;align-items:center;gap:8px;padding:10px 32px;background:#3a7abf;color:white;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border:none;border-radius:2px;cursor:pointer;text-transform:none;white-space:nowrap;" onclick="avanzarAContrasena()">&#9658; &nbsp;Comprobar DNI</button>
+        </div>
+
+        <div id="zona-boton-confirmar" class="zona-boton oculto">
+          <button style="display:inline-flex;align-items:center;gap:8px;padding:10px 32px;background:#3a7abf;color:white;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border:none;border-radius:2px;cursor:pointer;text-transform:none;white-space:nowrap;" onclick="avanzarALectura()">&#9658; &nbsp;Confirmar PIN</button>
+        </div>
+
+        <div id="zona-boton-continuar" class="zona-boton oculto">
+          <button style="display:inline-flex;align-items:center;gap:8px;padding:10px 32px;background:#3a7abf;color:white;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border:none;border-radius:2px;cursor:pointer;text-transform:none;white-space:nowrap;" onclick="confirmarDatos()">&#9658; &nbsp;Continuar</button>
         </div>
 
       </div>
     </div>
 
     <div class="aviso-info">
-      <strong> Información: </strong> Introduzca su DNI en el lector y pulse sobre el botón "Comprobar DNI"
+      <strong>ℹ Información:</strong> <span class="parpadeo">Introduzca su DNI en el lector y pulse sobre el botón "Comprobar DNI".</span>
+    </div>
+
+  </div>
+
+
+  <!-- MODAL ERROR PIN -->
+  <div id="modal-pin-error" class="modal-overlay oculto">
+    <div class="modal-error">
+      <div class="modal-error-titulo">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#c0392b;color:white;font-size:28px;font-weight:700;flex-shrink:0;">✕</span>
+        PIN incorrecto
+      </div>
+      <div class="modal-error-msg" id="modal-pin-msg">
+        El código PIN introducido no es correcto. Inténtelo de nuevo.
+      </div>
+      <button class="modal-error-btn" onclick="cerrarModalPin()">
+        Aceptar
+      </button>
     </div>
   </div>
-  </body>
-  </html>
 
-  
+  <!-- MODAL ERROR DNI -->
+  <div id="modal-dni-error" class="modal-overlay oculto">
+    <div class="modal-error">
+      <div class="modal-error-titulo"><span style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#c0392b;color:white;font-size:28px;font-weight:700;flex-shrink:0;">✕</span> DNI no encontrado</div>
+      <div class="modal-error-msg" id="modal-dni-msg">
+        Introduzca el DNI, por favor.
+      </div>
+      <button class="modal-error-btn" onclick="document.getElementById('modal-dni-error').classList.add('oculto')">
+        Aceptar
+      </button>
+    </div>
+  </div>
+
+</body>
+</html>
+
+
