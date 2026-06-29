@@ -97,5 +97,90 @@ def generar_pdf_certificado(codigo, nombre, apellidos, dni, distrito, seccion, m
         spaceAfter=4
     )
 
-    
+    # DNI parcialmente oculto
+    dni_oculto = dni[:4] + '****' + dni[-1] if len(dni) >= 5 else dni
+
+    # ── Construir el documento ────────────────────────────
+    elementos = []
+
+    # Cabecera institucional
+    elementos.append(Spacer(1, 0.3*cm))
+    elementos.append(Paragraph("SISTEMA DE VOTACIÓN ELECTRÓNICA", estilo_titulo))
+    elementos.append(Paragraph("Universidad de Burgos · Grado en Ingeniería Informática", estilo_subtitulo))
+    elementos.append(Spacer(1, 0.3*cm))
+
+    # Línea separadora
+    elementos.append(Table(
+        [['']],
+        colWidths=[17*cm],
+        style=TableStyle([('LINEBELOW', (0,0), (-1,-1), 2, AZUL)])
+    ))
+    elementos.append(Spacer(1, 0.4*cm))
+
+    # Título del certificado
+    elementos.append(Paragraph("✔ CERTIFICADO DE EMISIÓN DE VOTO", estilo_ok))
+    elementos.append(Spacer(1, 0.2*cm))
+
+    # Número de justificante
+    elementos.append(Paragraph(f"Justificante nº {codigo}", estilo_codigo))
+    elementos.append(Spacer(1, 0.4*cm))
+
+    # Tabla principal con datos del votante y QR
+    tabla_principal = Table(
+        [
+            [Paragraph("DATOS DEL VOTANTE", estilo_seccion)],
+            [Paragraph(f"Nombre:  <b>{nombre} {apellidos}</b>", estilo_normal)],
+            [Paragraph(f"DNI:  <b>{dni_oculto}</b>", estilo_normal)],
+            [Spacer(1, 0.3*cm)],
+            [Paragraph("DATOS DE LA MESA ELECTORAL", estilo_seccion)],
+            [Paragraph(f"Local:  <b>{local}</b>", estilo_normal)],
+            [Paragraph(f"Distrito: <b>{distrito}</b>  ·  Sección: <b>{seccion}</b>  ·  Mesa: <b>{mesa}</b>", estilo_normal)],
+            [Spacer(1, 0.3*cm)],
+            [Paragraph("FECHA Y HORA DE EMISIÓN", estilo_seccion)],
+            [Paragraph(f"<b>{fecha_hora}</b>", estilo_normal)],
+        ],
+        colWidths=[17*cm],
+        style=TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), GRIS_FONDO),
+            ('BOX', (0,0), (-1,-1), 1, GRIS_BORDE),
+            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+            ('PADDING', (0,0), (-1,-1), 14),
+        ])
+    )
+    elementos.append(tabla_principal)
+    elementos.append(Spacer(1, 0.5*cm))
+
+    # Texto legal
+    elementos.append(Table(
+        [['']],
+        colWidths=[17*cm],
+        style=TableStyle([('LINEBELOW', (0,0), (-1,-1), 0.5, GRIS_BORDE)])
+    ))
+    elementos.append(Spacer(1, 0.3*cm))
+
+    texto_legal = (
+        "El presente documento acredita que el titular identificado ha ejercido su derecho al voto "
+        "de forma correcta a través del Sistema de Votación Electrónica de la Universidad de Burgos. "
+        "El voto emitido es <b>secreto e irrevocable</b>, conforme a lo establecido en la Ley Orgánica "
+        "5/1985, de 19 de junio, del Régimen Electoral General (LOREG). El contenido del voto no figura "
+        "en este justificante ni en ningún registro asociado a la identidad del votante."
+    )
+    elementos.append(Paragraph(texto_legal, estilo_legal))
+    elementos.append(Spacer(1, 0.4*cm))
+
+    # Pie institucional
+    elementos.append(Table(
+        [['']],
+        colWidths=[17*cm],
+        style=TableStyle([('LINEABOVE', (0,0), (-1,-1), 1, AZUL)])
+    ))
+    elementos.append(Spacer(1, 0.2*cm))
+    elementos.append(Paragraph(
+        "Sistema de Votación Electrónica · Universidad de Burgos · Uso restringido",
+        ParagraphStyle('pie', fontSize=8, fontName='Helvetica', textColor=GRIS_MED, alignment=TA_CENTER)
+    ))
+
+    doc.build(elementos)
+    buffer.seek(0)
+    return buffer.read()
 
