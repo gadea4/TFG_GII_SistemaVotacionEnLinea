@@ -1,0 +1,652 @@
+<!-- Autora: Gadea Diez Prieto-->
+<!--script generado para la parte de simulacion-->
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulación Electoral — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun.css">
+  <style>
+
+
+/* ── CONTENIDO ── */
+.contenido {
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--blanco);
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.panel-body { padding: 24px 36px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+
+.panel-body-fila-sim { display: flex; gap: 32px; align-items: flex-start; flex: 1; min-height: 0; }
+.panel-body-tabla { display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
+.panel-body-hemiciclo { flex: 1; min-width: 0; }
+
+/* ── OCULTO ── */
+.oculto { display: none !important; }
+</style>
+  <style>
+    /* ── CABECERA DE LA LISTA ── */
+    .sim-lista-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gris-borde);
+    }
+    .sim-lista-titulo { font-size: 13px; font-weight: 700; color: var(--texto-suave); letter-spacing: 0.04em; text-transform: uppercase; }
+    .sim-resultado-info { font-size: 12px; color: var(--texto-suave); }
+
+    .sim-btn-dhont {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--azul); color: var(--blanco);
+      padding: 9px 22px; font-size: 13px; font-weight: 700;
+      border: none; border-radius: 2px; cursor: pointer;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      transition: background 0.15s;
+    }
+    .sim-btn-dhont:hover { background: var(--azul-oscuro); }
+
+    /* ── LISTA DE PARTIDOS ── */
+    .sim-lista-wrap {
+      flex: 0 1 auto;
+      width: fit-content;
+      min-height: 0;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 3px solid #999;
+    }
+
+    .sim-fila-totales {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      padding: 6px 4px 4px 4px;
+      flex-shrink: 0;
+    }
+    .sim-fila-totales input {
+      width: 60px;
+      padding: 4px 6px;
+      border: 2px solid #aaa;
+      border-radius: 2px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      color: var(--azul);
+      background: var(--gris-panel);
+      outline: none;
+    }
+
+    .sim-botones-accion {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px 4px 4px 4px;
+      flex-shrink: 0;
+      width: fit-content;
+    }
+
+    .sim-cabecera-cols {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      padding: 0 4px 6px 4px;
+      border-bottom: 2px solid var(--gris-borde);
+      flex-shrink: 0;
+    }
+    .sim-cabecera-cols span {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .sim-col-partido      { width: 320px; text-align: center; flex-shrink: 0; }
+    .sim-col-votos        { width: 60px; text-align: center; flex-shrink: 0; }
+    .sim-col-porc         { width: 60px; text-align: center; flex-shrink: 0; margin-left: -8px; }
+    .sim-col-escanos      { width: 70px; text-align: center; flex-shrink: 0; margin-left: -15px; }
+    .sim-col-escanos-sim  { width: 100px; text-align: center; flex-shrink: 0; color: var(--azul); margin-left: -15px; }
+
+    .sim-campo {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 4px;
+      border-bottom: 1px solid #eee;
+    }
+    .sim-campo:last-child { border-bottom: none; }
+
+    .sim-campo-nombre {
+      width: 320px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 14px;
+      color: var(--negro);
+    }
+
+    .sim-campo input {
+      width: 60px;
+      padding: 3px 6px;
+      border: 2px solid #aaa;
+      border-radius: 2px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      text-align: right;
+      outline: none;
+      flex-shrink: 0;
+    }
+    .sim-campo input:focus { border-color: var(--azul); }
+    .sim-campo input.modificado { border-color: var(--azul); background: var(--azul-fondo); }
+    .sim-campo input.bajo-umbral { border-color: var(--rojo-borde); background: var(--rojo-fondo); color: var(--rojo); }
+    .sim-campo input.bajo-umbral.modificado { border-color: var(--azul); background: var(--azul-fondo); color: var(--texto); }
+
+    .sim-campo-porc {
+      width: 60px;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--texto-suave);
+      margin-left: -8px;
+    }
+    .sim-campo-escanos {
+      width: 70px;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--negro);
+      margin-left: -15px;
+    }
+    .sim-campo-escanos-sim {
+      width: 100px;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      margin-left: -15px;
+    }
+    .sim-campo-escanos-sim.con-escano { color: var(--azul); }
+
+    .sim-vacio {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      color: #444; font-size: 15px; text-align: center;
+    }
+
+    /* ── RESPONSIVE: TABLET ── */
+    @media (max-width: 1024px) {
+      .hdr-top { padding: 10px 24px; }
+      .hdr-top-txt { font-size: 13px; }
+      .hdr-titulo { padding: 14px 24px; }
+      .hdr-titulo h1 { font-size: 20px; }
+      .contenido { padding: 16px 20px; }
+      .panel-body { padding: 18px 20px; }
+      .sim-lista-wrap { width: 100%; }
+      .sim-cabecera-cols { width: 100%; }
+      .sim-campo input { width: 55px; }
+    }
+
+    /* ── RESPONSIVE: MÓVIL ── */
+    @media (max-width: 767px) {
+      .hdr-top { flex-direction: column; gap: 8px; padding: 10px 16px; align-items: center; }
+      .hdr-titulo h1 { font-size: 17px; letter-spacing: 0.03em; }
+      .sim-campo { padding: 8px 4px; gap: 10px; }
+      .sim-col-porc, .sim-campo-porc,
+      .sim-col-escanos, .sim-campo-escanos,
+      .sim-col-escanos-sim, .sim-campo-escanos-sim { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia" id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Simulación Electoral</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+
+    <div class="tabs" style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="tab">Administración</div>
+      <a href="/admin_panel" style="font-size:11px; color:rgba(0,0,0,0.75); text-decoration:none; letter-spacing:0.04em; padding:0 16px;">← Volver al panel</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Resultados elecciones municipales de Burgos — 28 de mayo de 2023</div>
+      <div class="panel-body">
+
+        <div class="panel-body-fila-sim">
+
+          <div class="panel-body-tabla">
+
+            <div class="sim-lista-hdr">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div class="sim-lista-titulo">Votos por candidatura</div>
+                <div class="sim-resultado-info" id="sim-resultado-info"></div>
+              </div>
+            </div>
+
+            <div class="sim-cabecera-cols">
+              <span class="sim-col-partido">Partido</span>
+              <span class="sim-col-votos">Votos</span>
+              <span class="sim-col-porc">%</span>
+              <span class="sim-col-escanos">CONC.</span>
+              <span class="sim-col-escanos-sim">Simulación</span>
+            </div>
+
+            <div class="sim-lista-wrap" id="sim-lista-wrap">
+              <div class="sim-vacio">Cargando datos...</div>
+            </div>
+
+            <div class="sim-fila-totales">
+              <span class="sim-col-partido"></span>
+              <span class="sim-col-votos"></span>
+              <span class="sim-col-porc"></span>
+              <span class="sim-col-escanos">
+                <input type="text" id="total-concejales-conc" value="0" readonly>
+              </span>
+              <span class="sim-col-escanos-sim">
+                <input type="text" id="total-concejales-sim" value="0" readonly>
+              </span>
+            </div>
+
+            <div class="sim-botones-accion">
+              <button class="sim-btn-dhont" onclick="aplicarLeyDhont()">Ley d'Hont</button>
+              <button class="sim-btn-dhont" onclick="reiniciarSimulacion()">REINICIAR</button>
+            </div>
+
+          </div>
+
+          <!-- REPARTO DE CONCEJALES — HEMICICLO -->
+          <div class="panel-body-hemiciclo">
+            <div class="sim-lista-titulo" style="margin-bottom: 10px;">Reparto concejales (simulación)</div>
+            <div id="hemiciclo-contenedor">
+              <div class="sim-vacio">Pulse "Ley d'Hont" para calcular el reparto.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+    tick(); setInterval(tick, 1000);
+
+    let filasOriginales = [];
+    let valoresModificados = {};
+    let colorPorPartido = {};
+
+    async function cargarColoresPartidos() {
+      try {
+        const resp = await fetch('/api/bbdd/partidos');
+        const datos = await resp.json();
+        if (datos.ok) {
+          datos.filas.forEach(p => { colorPorPartido[p.nombre] = p.color; });
+        }
+      } catch (e) {
+        console.error('Error cargando colores de partidos:', e);
+      }
+    }
+
+    async function cargarSimulacion() {
+      const wrap = document.getElementById('sim-lista-wrap');
+      try {
+        const resp = await fetch('/api/bbdd/simulacion');
+        const datos = await resp.json();
+
+        if (!datos.ok) {
+          wrap.innerHTML = `<div class="sim-vacio">${datos.error || 'Error al cargar los datos'}</div>`;
+          return;
+        }
+        if (datos.filas.length === 0) {
+          wrap.innerHTML = '<div class="sim-vacio">No hay datos registrados.</div>';
+          return;
+        }
+
+        filasOriginales = datos.filas;
+        valoresModificados = {};
+        renderizarLista();
+      } catch (e) {
+        wrap.innerHTML = `<div class="sim-vacio">Error de conexión: ${e.message}</div>`;
+      }
+    }
+
+    function formatoMiles(numero) {
+      return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function formatearConSigno(numero) {
+      const formateado = formatoMiles(Math.abs(numero));
+      if (numero > 0) return `+${formateado}`;
+      if (numero < 0) return `−${formateado}`;
+      return formateado;
+    }
+
+    function claseSigno(numero) {
+      if (numero > 0) return 'positivo';
+      if (numero < 0) return 'negativo';
+      return 'neutro';
+    }
+
+    const TOTAL_CONCEJALES_BURGOS = 27;
+    const UMBRAL_MINIMO_PORCENTAJE = 5;
+
+    // Calcula el reparto de escaños mediante el sistema D'Hondt:
+    // votos validos primero, lugo se excluyn los de fuera del umbral y para cada partido se hacen los cocientes 
+
+    function calcularDhont(filas, totalEscanos) {
+      const totalValidos = filas.reduce((suma, f) => suma + f.votos, 0);
+
+      const partidosEnJuego = filas.filter(f => {
+        if (f.tipo === 'voto_blanco') return false;
+        const porcentaje = totalValidos > 0 ? (f.votos / totalValidos * 100) : 0;
+        return porcentaje >= UMBRAL_MINIMO_PORCENTAJE;
+      });
+
+      const resultado = {};
+      filas.forEach(f => { resultado[f.id] = 0; });
+
+      if (partidosEnJuego.length === 0) return resultado;
+
+      const cocientes = [];
+      partidosEnJuego.forEach(p => {
+        for (let divisor = 1; divisor <= totalEscanos; divisor++) {
+          cocientes.push({ id: p.id, votos: p.votos, cociente: p.votos / divisor });
+        }
+      });
+
+      cocientes.sort((a, b) => {
+        if (b.cociente !== a.cociente) return b.cociente - a.cociente;
+        return b.votos - a.votos;
+      });
+
+      cocientes.slice(0, totalEscanos).forEach(c => { resultado[c.id]++; });
+
+      return resultado;
+    }
+
+    function renderizarLista() {
+      const wrap = document.getElementById('sim-lista-wrap');
+      const info = document.getElementById('sim-resultado-info');
+
+      const totalVotos = filasOriginales.reduce((suma, f) => suma + f.votos, 0);
+      info.textContent = `${filasOriginales.length} candidaturas · ${formatoMiles(totalVotos)} votos totales`;
+
+      const escanosSimulados = calcularDhont(filasOriginales, TOTAL_CONCEJALES_BURGOS);
+
+      wrap.innerHTML = filasOriginales.map((fila, idx) => {
+        const porcentajeNum = totalVotos > 0 ? (fila.votos / totalVotos * 100) : 0;
+        const porcentaje = porcentajeNum.toFixed(2);
+        const esBlanco = fila.tipo === 'voto_blanco';
+        const bajoUmbral = !esBlanco && porcentajeNum < UMBRAL_MINIMO_PORCENTAJE;
+        const etiqueta = fila.partido;
+        const escSim = esBlanco ? null : escanosSimulados[fila.id];
+        return `
+          <div class="sim-campo ${esBlanco ? 'es-blanco' : ''}">
+            <div class="sim-campo-nombre" title="${etiqueta}">${etiqueta}</div>
+            <input type="text" inputmode="numeric" class="${bajoUmbral ? 'bajo-umbral' : ''}"
+              id="votos-${fila.id}" value="${formatoMiles(fila.votos)}" aria-label="Votos de ${fila.partido}"
+              onchange="marcarModificado(${fila.id}, this)"
+              oninput="marcarModificado(${fila.id}, this)">
+            <div class="sim-campo-porc">${porcentaje}%</div>
+            <div class="sim-campo-escanos">${esBlanco ? '—' : fila.escanos}</div>
+            <div class="sim-campo-escanos-sim ${esBlanco ? '' : (escSim > 0 ? 'con-escano' : '')}">${esBlanco ? '—' : escSim}</div>
+          </div>
+        `;
+      }).join('');
+
+      const totalConc = filasOriginales.reduce((suma, f) => suma + (f.tipo === 'voto_blanco' ? 0 : f.escanos), 0);
+      const totalSim = filasOriginales.reduce((suma, f) => suma + (f.tipo === 'voto_blanco' ? 0 : (escanosSimulados[f.id] || 0)), 0);
+      document.getElementById('total-concejales-conc').value = totalConc;
+      document.getElementById('total-concejales-sim').value = totalSim;
+
+      dibujarHemiciclo(filasOriginales, escanosSimulados);
+    }
+
+    function marcarModificado(id, input) {
+      const soloDigitos = input.value.replace(/[^\d]/g, '');
+      const nuevoValor = parseInt(soloDigitos || '0', 10);
+
+      const formateado = formatoMiles(nuevoValor);
+      if (input.value !== formateado) {
+        input.value = formateado;
+      }
+
+      const filaOriginal = filasOriginales.find(f => f.id === id);
+
+      if (filaOriginal && nuevoValor !== filaOriginal.votos) {
+        valoresModificados[id] = nuevoValor;
+        input.classList.add('modificado');
+      } else {
+        delete valoresModificados[id];
+        input.classList.remove('modificado');
+      }
+
+      recalcularDerivados();
+    }
+
+    function recalcularDerivados() {
+      const filasConVotosActuales = obtenerFilasConVotosActuales();
+      const totalVotos = filasConVotosActuales.reduce((suma, f) => suma + f.votos, 0);
+
+      document.getElementById('sim-resultado-info').textContent =
+        `${filasConVotosActuales.length} candidaturas · ${formatoMiles(totalVotos)} votos totales`;
+
+      filasConVotosActuales.forEach(fila => {
+        const esBlanco = fila.tipo === 'voto_blanco';
+        const porcentajeNum = totalVotos > 0 ? (fila.votos / totalVotos * 100) : 0;
+        const bajoUmbral = !esBlanco && porcentajeNum < UMBRAL_MINIMO_PORCENTAJE;
+
+        const inputEl = document.getElementById('votos-' + fila.id);
+        if (inputEl) inputEl.classList.toggle('bajo-umbral', bajoUmbral);
+
+        const fieldEl = inputEl ? inputEl.closest('.sim-campo') : null;
+        if (!fieldEl) return;
+
+        const porcEl = fieldEl.querySelector('.sim-campo-porc');
+        if (porcEl) porcEl.textContent = porcentajeNum.toFixed(2) + '%';
+      });
+    }
+
+    function obtenerFilasConVotosActuales() {
+      return filasOriginales.map(f => {
+        const valorEnPantalla = valoresModificados.hasOwnProperty(f.id)
+          ? valoresModificados[f.id]
+          : f.votos;
+        return { ...f, votos: valorEnPantalla };
+      });
+    }
+
+    function aplicarLeyDhont() {
+      const filasConVotosActuales = obtenerFilasConVotosActuales();
+      const escanosSimulados = calcularDhont(filasConVotosActuales, TOTAL_CONCEJALES_BURGOS);
+
+      filasConVotosActuales.forEach(fila => {
+        const esBlanco = fila.tipo === 'voto_blanco';
+        const inputEl = document.getElementById('votos-' + fila.id);
+        const fieldEl = inputEl ? inputEl.closest('.sim-campo') : null;
+        if (!fieldEl) return;
+
+        const escSimEl = fieldEl.querySelector('.sim-campo-escanos-sim');
+        if (escSimEl && !esBlanco) {
+          const escSim = escanosSimulados[fila.id];
+          escSimEl.textContent = escSim;
+          escSimEl.classList.toggle('con-escano', escSim > 0);
+        }
+      });
+
+      const totalSim = filasConVotosActuales.reduce((suma, f) => suma + (f.tipo === 'voto_blanco' ? 0 : (escanosSimulados[f.id] || 0)), 0);
+      document.getElementById('total-concejales-sim').value = totalSim;
+
+      dibujarHemiciclo(filasConVotosActuales, escanosSimulados);
+    }
+
+    function generarPathHemiciclo(escanos, totalEscanos, radioExt, radioInt, cx, cy, anguloInicio) {
+      const anguloPorEscano = Math.PI / totalEscanos;
+      const anguloFin = anguloInicio - escanos * anguloPorEscano;
+
+      const x1ext = cx + radioExt * Math.cos(anguloInicio);
+      const y1ext = cy - radioExt * Math.sin(anguloInicio);
+      const x2ext = cx + radioExt * Math.cos(anguloFin);
+      const y2ext = cy - radioExt * Math.sin(anguloFin);
+      const x1int = cx + radioInt * Math.cos(anguloFin);
+      const y1int = cy - radioInt * Math.sin(anguloFin);
+      const x2int = cx + radioInt * Math.cos(anguloInicio);
+      const y2int = cy - radioInt * Math.sin(anguloInicio);
+
+      const d = `M ${x1ext.toFixed(2)} ${y1ext.toFixed(2)} `
+        + `A ${radioExt} ${radioExt} 0 0 1 ${x2ext.toFixed(2)} ${y2ext.toFixed(2)} `
+        + `L ${x1int.toFixed(2)} ${y1int.toFixed(2)} `
+        + `A ${radioInt} ${radioInt} 0 0 0 ${x2int.toFixed(2)} ${y2int.toFixed(2)} Z`;
+
+      return { d, anguloFin };
+    }
+
+    function dibujarHemiciclo(filasConVotosActuales, escanosSimulados) {
+      const cont = document.getElementById('hemiciclo-contenedor');
+
+      function colorFijoPorNombre(nombre) {
+        const n = nombre.toUpperCase();
+        if (n.includes('SOCIALISTA') && !n.includes('LIBERAL')) return '#E30613';
+        if (n.includes('POPULAR')) return '#0056A3';
+        if (n === 'VOX' || n.includes('VOX')) return '#5AC035';
+        return null;
+      }
+
+      const coloresReserva = ['#999999', '#777777', '#555555', '#333333'];
+      let indiceReserva = 0;
+
+      const conEscanos = filasConVotosActuales
+        .filter(f => f.tipo !== 'voto_blanco')
+        .map(f => ({ nombre: f.partido, escanos: escanosSimulados[f.id] || 0 }))
+        .filter(c => c.escanos > 0)
+        .sort((a, b) => b.escanos - a.escanos);
+
+      if (conEscanos.length === 0) {
+        cont.innerHTML = '<div class="sim-vacio">Ninguna candidatura alcanza el umbral del 5% todavía.</div>';
+        return;
+      }
+
+      const radioExt = 180, radioInt = 100, cx = 200, cy = 200;
+      let anguloActual = Math.PI;
+      const segmentos = [];
+
+      conEscanos.forEach(c => {
+        const color = colorFijoPorNombre(c.nombre) || colorPorPartido[c.nombre] || coloresReserva[indiceReserva++ % coloresReserva.length];
+        const { d, anguloFin } = generarPathHemiciclo(c.escanos, TOTAL_CONCEJALES_BURGOS, radioExt, radioInt, cx, cy, anguloActual);
+        segmentos.push({ nombre: c.nombre, escanos: c.escanos, color, d });
+        anguloActual = anguloFin;
+      });
+
+      const pathsSvg = segmentos.map(s =>
+        `<path d="${s.d}" fill="${s.color}" stroke="#fff" stroke-width="2"><title>${s.nombre}: ${s.escanos} escaños</title></path>`
+      ).join('');
+
+      const leyenda = segmentos.map(s => `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="display:inline-block; width:14px; height:14px; background:${s.color}; border-radius:2px; flex-shrink:0;"></span>
+          <span style="font-size:13px;">${s.nombre} — <strong>${s.escanos}</strong></span>
+        </div>
+      `).join('');
+
+      cont.innerHTML = `
+        <div style="display:flex; align-items:center; gap:32px; flex-wrap:wrap;">
+          <svg viewBox="0 0 400 220" style="width:320px; flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+            ${pathsSvg}
+            <text x="200" y="195" text-anchor="middle" font-size="28" font-weight="700" fill="var(--negro)">${TOTAL_CONCEJALES_BURGOS}</text>
+            <text x="200" y="170" text-anchor="middle" font-size="11" fill="var(--texto-suave)" letter-spacing="1">CONCEJALES</text>
+          </svg>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${leyenda}
+          </div>
+        </div>
+      `;
+    }
+
+    function reiniciarSimulacion() {
+      valoresModificados = {};
+
+      filasOriginales.forEach(fila => {
+        const inputEl = document.getElementById('votos-' + fila.id);
+        if (!inputEl) return;
+        inputEl.value = formatoMiles(fila.votos);
+        inputEl.classList.remove('modificado');
+      });
+
+      recalcularDerivados();
+      aplicarLeyDhont();
+    }
+
+    window.addEventListener('load', async () => {
+      await cargarColoresPartidos();
+      await cargarSimulacion();
+    });
+
+    let temporizadorInactividad = null;
+
+    function reiniciarTemporizadorInactividad() {
+      if (temporizadorInactividad) clearTimeout(temporizadorInactividad);
+      temporizadorInactividad = setTimeout(cerrarSesionPorInactividad, 60000);
+    }
+
+    async function cerrarSesionPorInactividad() {
+      try {
+        await fetch('/api/logout_admin', { method: 'POST' });
+      } catch (e) {}
+      window.location.href = '/';
+    }
+
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evento => {
+      document.addEventListener(evento, reiniciarTemporizadorInactividad, { passive: true });
+    });
+    reiniciarTemporizadorInactividad();
+  </script>
+
+</body>
+</html>
+

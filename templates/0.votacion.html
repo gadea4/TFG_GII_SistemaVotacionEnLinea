@@ -1,0 +1,660 @@
+<!-- Autora: Gadea Diez Prieto-->
+<!--script generado para la parte de votacion-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votación — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun.css">
+  <style>
+    /* CONTENIDO */
+    .contenido {
+      padding: 24px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--blanco);
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-body { padding: 24px 36px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+
+    /* TARJETAS ESTADÍSTICAS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 186px);
+      gap: 6px;
+      width: fit-content;
+    }
+    .fila-estadisticas {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    .bloque-estadisticas {
+      display: flex;
+      flex-direction: column;
+    }
+    .stats-grid-titulo {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 0 0 6px 0;
+      padding-left: 9px;
+    }
+    .stat-card {
+      background: var(--blanco);
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+    }
+    .stat-label {
+      width: 90px;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .stat-valor {
+      width: 70px;
+      padding: 3px 6px;
+      border: 2px solid #aaa;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: Arial, sans-serif;
+      text-align: right;
+      color: var(--azul);
+      background: var(--gris-panel);
+      flex-shrink: 0;
+    }
+
+    /* SECCIONES */
+    .fila-resultados {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      width: 100%;
+      margin-top: -8px;
+    }
+    .seccion {
+      background: var(--blanco);
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      width: 50%;
+    }
+    .columna-resultados {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      width: 570px;
+      flex-shrink: 0;
+    }
+    .columna-resultados .seccion {
+      width: 100%;
+    }
+    .fila-resultados .seccion-grafico {
+      width: 500px;
+    }
+    .seccion-titulo {
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--azul);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--gris-borde);
+      background: var(--gris-panel);
+    }
+    .seccion-body {
+      padding: 8px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-x: auto;
+    }
+
+    /* BOTONES DE ACCIÓN */
+    .acciones { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-accion {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--azul);
+      color: var(--blanco);
+      padding: 9px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: background 0.15s;
+    }
+    .btn-accion:hover { background: var(--azul-oscuro); }
+    .btn-accion:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* TABLA DE RESULTADOS */
+    .tabla-resultados {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .tabla-resultados th {
+      background: var(--gris-panel);
+      padding: 6px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--gris-borde);
+    }
+    .tabla-resultados td {
+      padding: 3px 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tabla-resultados tr:last-child td { border-bottom: none; }
+    .tabla-resultados tbody tr:nth-child(odd)  td { background: #ffffff; }
+    .tabla-resultados tbody tr:nth-child(even) td { background: #f8c8b8; }
+    .tabla-resultados-derecha th:nth-child(2),
+    .tabla-resultados-derecha th:nth-child(3),
+    .tabla-resultados-derecha td:nth-child(2),
+    .tabla-resultados-derecha td:nth-child(3) {
+      text-align: right;
+    }
+    .barra-wrap { background: #eee; border-radius: 2px; height: 8px; width: 100%; max-width: 200px; }
+    .barra { background: var(--azul); height: 8px; border-radius: 2px; transition: width 0.4s; }
+
+    /* MENSAJES */
+    .msg {
+      display: none;
+      padding: 10px 14px;
+      font-size: 13px;
+      border-radius: 0 2px 2px 0;
+      border-left: 4px solid;
+    }
+    .msg-ok    { background: var(--verde-fondo); border-color: var(--verde); color: #1a5a35; }
+    .msg-error { background: var(--rojo-fondo);  border-color: var(--rojo);  color: var(--rojo); }
+    .msg-info  { background: var(--azul-fondo);  border-color: var(--azul);  color: #2a5080; }
+
+    /* MODAL CONFIRMACIÓN */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.activo { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 2px;
+      padding: 28px 32px;
+      max-width: 480px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-cabecera { display: flex; align-items: center; gap: 14px; }
+    .modal-icono-aviso { width: 56px; height: 56px; flex-shrink: 0; }
+    .modal-icono-aviso svg { width: 100%; height: 100%; }
+    .modal-titulo { flex: 1; font-size: 22px; font-weight: 700; color: var(--negro); text-align: center; }
+    .modal-sub    { font-size: 15px; font-weight: 700; color: var(--negro); line-height: 1.7; margin-top: 8px; }
+    .modal-check-extra {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--rojo);
+      background: var(--rojo-fondo);
+      border: 1px solid var(--rojo-borde);
+      border-radius: 2px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .modal-check-extra input { cursor: pointer; }
+    .modal-btns   { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn-sm { padding: 8px 18px; font-size: 13px; font-weight: 700; border: none; border-radius: 2px; cursor: pointer; color: #fff; }
+    .btn-sm:disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; }
+    .btn-rojo { background: var(--rojo); }
+    .btn-rojo:hover { background: #a02020; }
+
+    /* ── RESPONSIVE: TABLET (768px - 1024px) ── */
+    @media (max-width: 1024px) {
+      .hdr-top { padding: 10px 24px; }
+      .hdr-top-txt { font-size: 13px; }
+      .hdr-titulo { padding: 14px 24px; }
+      .hdr-titulo h1 { font-size: 19px; }
+      .contenido { padding: 16px 20px; }
+      .seccion-body { padding: 16px 18px; }
+    }
+
+    /* ── RESPONSIVE: MÓVIL (max 767px) ── */
+    @media (max-width: 767px) {
+      .hdr-top { flex-direction: column; gap: 8px; padding: 10px 16px; align-items: center; }
+      .hdr-titulo h1 { font-size: 16px; }
+      .fila-estadisticas { flex-direction: column; gap: 16px; }
+      .stats-grid { grid-template-columns: 1fr; width: 100%; }
+      .fila-resultados { flex-direction: column; gap: 16px; }
+      .seccion { width: 100%; }
+      .acciones { flex-direction: column; }
+      .acciones .btn-accion { width: 100%; justify-content: center; }
+      .seccion-body { overflow-x: auto; }
+      .tabla-resultados { min-width: 480px; }
+      .modal-box { padding: 24px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia"  id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Votación</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+
+    <div class="tabs" style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="tab">Administración</div>
+      <a href="/admin_panel" style="font-size:11px; color:rgba(0,0,0,0.75); text-decoration:none; letter-spacing:0.04em; padding:0 16px;">← Volver al panel</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Gestión de la votación</div>
+      <div class="panel-body">
+
+        <!-- ESTADÍSTICAS -->
+        <div class="fila-estadisticas">
+
+          <div class="bloque-estadisticas">
+            <div class="stats-grid-titulo">Datos votación</div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Votantes</div>
+                <div class="stat-valor" id="stat-total">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Emitidos</div>
+                <div class="stat-valor" id="stat-votados">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">En blanco</div>
+                <div class="stat-valor" id="stat-blancos">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Pendientes</div>
+                <div class="stat-valor" id="stat-pendientes">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Participación</div>
+                <div class="stat-valor" id="stat-participacion">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Nulos</div>
+                <div class="stat-valor" id="stat-nulos">—</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="fila-resultados">
+
+          <div class="columna-resultados">
+
+            <!-- RESULTADOS POR CANDIDATURA -->
+            <div class="seccion">
+              <div class="seccion-titulo">Resultados por candidatura</div>
+              <div class="seccion-body">
+                <table class="tabla-resultados">
+                  <thead>
+                    <tr>
+                      <th>Candidatura</th>
+                      <th>Votos</th>
+                      <th>%</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-resultados-body">
+                    <tr><td colspan="3" style="color:#999; text-align:center; padding:20px;">Cargando resultados...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="acciones" style="align-items: center;">
+              <button class="btn-accion btn-rojo" onclick="confirmarAccion('resetear_votos')">
+                Reset Votación
+              </button>
+              <div class="msg" id="msg-censo"></div>
+            </div>
+
+          </div>
+
+          <!-- REPARTO CONCEJALES — HEMICICLO -->
+          <div class="seccion seccion-grafico">
+            <div class="seccion-titulo">Reparto concejales</div>
+            <div class="seccion-body" id="hemiciclo-contenedor">
+              <div class="bbdd-vacio" style="color:#999; text-align:center; padding:20px;">Cargando reparto de escaños...</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL CONFIRMACIÓN -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-box">
+      <div class="modal-cabecera">
+        <div class="modal-icono-aviso">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="modal-icono-sombra" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.2"/>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="44" fill="#e53935" filter="url(#modal-icono-sombra)"/>
+            <rect x="44.5" y="26" width="11" height="34" rx="5.5" fill="#fff"/>
+            <circle cx="50" cy="72" r="6.5" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="modal-titulo" id="modal-confirm-titulo">Confirmar acción</div>
+      </div>
+      <div class="modal-sub" id="modal-confirm-sub">¿Está seguro de que desea realizar esta acción?</div>
+      <label class="modal-check-extra">
+        <input type="checkbox" id="modal-confirm-checkbox" onchange="actualizarBotonConfirmarVotacion()">
+        Sí, quiero resetear todos los votos
+      </label>
+      <div class="modal-btns">
+        <button class="btn-sm" style="background:#eee;color:#333;" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-sm btn-rojo" id="modal-confirm-btn" onclick="ejecutarAccion()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let accionPendiente = null;
+
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+    tick(); setInterval(tick, 1000);
+
+    function formatoMiles(numero) {
+      return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    async function cargarEstadisticas() {
+      try {
+        const resp = await fetch('/api/admin/estadisticas');
+        const datos = await resp.json();
+        if (!datos.ok) return;
+
+        document.getElementById('stat-total').textContent        = formatoMiles(datos.total);
+        document.getElementById('stat-votados').textContent      = formatoMiles(datos.votados);
+        document.getElementById('stat-participacion').textContent = datos.participacion + '%';
+        document.getElementById('stat-pendientes').textContent   = formatoMiles(datos.total - datos.votados);
+
+        const filaBlanco = datos.resultados.find(r => r.candidatura === 'Voto en blanco');
+        const filaNulo   = datos.resultados.find(r => r.candidatura === 'Voto nulo');
+        document.getElementById('stat-blancos').textContent = formatoMiles(filaBlanco ? filaBlanco.votos : 0);
+        document.getElementById('stat-nulos').textContent   = formatoMiles(filaNulo ? filaNulo.votos : 0);
+
+        const tbody = document.getElementById('tabla-resultados-body');
+        if (datos.resultados.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" style="color:#999;text-align:center;padding:20px;">No hay votos registrados aún.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = datos.resultados.map(r => `
+          <tr>
+            <td><strong>${r.candidatura}</strong></td>
+            <td>${formatoMiles(r.votos)}</td>
+            <td>${r.porcentaje}%</td>
+          </tr>
+        `).join('');
+      } catch(e) {
+        console.error('Error cargando estadísticas:', e);
+      }
+    }
+
+    function confirmarAccion(accion) {
+      accionPendiente = accion;
+      document.getElementById('modal-confirm-titulo').textContent = 'Resetear todos los votos';
+      document.getElementById('modal-confirm-sub').innerHTML =
+        'Eliminar tabla de control de votos emitidos<br>Eliminar la urna electoral<br>Todos los votantes podrán votar de nuevo';
+      document.getElementById('modal-confirm-checkbox').checked = false;
+      document.getElementById('modal-confirm-btn').disabled = true;
+      document.getElementById('modal-confirm').classList.add('activo');
+    }
+
+    function actualizarBotonConfirmarVotacion() {
+      const marcado = document.getElementById('modal-confirm-checkbox').checked;
+      document.getElementById('modal-confirm-btn').disabled = !marcado;
+    }
+
+    function cerrarModal() {
+      accionPendiente = null;
+      document.getElementById('modal-confirm').classList.remove('activo');
+    }
+
+    async function ejecutarAccion() {
+      const accion = accionPendiente;
+      cerrarModal();
+      if (!accion) return;
+
+      const msgEl = document.getElementById('msg-censo');
+
+      try {
+        const resp = await fetch('/api/admin/resetear_votos', { method: 'POST' });
+        const datos = await resp.json();
+        msgEl.textContent = datos.mensaje || (datos.ok ? 'Operación completada.' : 'Error al ejecutar la operación.');
+        msgEl.className = 'msg ' + (datos.ok ? 'msg-ok' : 'msg-error');
+        msgEl.style.display = 'block';
+        if (datos.ok) { cargarEstadisticas(); cargarHemiciclo(); }
+      } catch(e) {
+        msgEl.textContent = 'Error de conexión con el servidor.';
+        msgEl.className = 'msg msg-error';
+        msgEl.style.display = 'block';
+      }
+    }
+
+    const TOTAL_CONCEJALES_BURGOS = 27;
+    const UMBRAL_MINIMO_PORCENTAJE = 5;
+
+    function calcularDhontEnVivo(candidaturas, totalEscanos) {
+      const totalValidos = candidaturas.reduce((suma, c) => suma + c.votos, 0);
+      const enJuego = candidaturas.filter(c => {
+        const porcentaje = totalValidos > 0 ? (c.votos / totalValidos * 100) : 0;
+        return porcentaje >= UMBRAL_MINIMO_PORCENTAJE;
+      });
+
+      const resultado = {};
+      candidaturas.forEach(c => { resultado[c.candidatura] = 0; });
+      if (enJuego.length === 0) return resultado;
+
+      const cocientes = [];
+      enJuego.forEach(c => {
+        for (let divisor = 1; divisor <= totalEscanos; divisor++) {
+          cocientes.push({ nombre: c.candidatura, votos: c.votos, cociente: c.votos / divisor });
+        }
+      });
+      cocientes.sort((a, b) => b.cociente !== a.cociente ? b.cociente - a.cociente : b.votos - a.votos);
+      cocientes.slice(0, totalEscanos).forEach(c => { resultado[c.nombre]++; });
+
+      return resultado;
+    }
+
+    function generarPathHemiciclo(escanos, totalEscanos, radioExt, radioInt, cx, cy, anguloInicio) {
+      const anguloPorEscano = Math.PI / totalEscanos;
+      const anguloFin = anguloInicio - escanos * anguloPorEscano;
+
+      const x1ext = cx + radioExt * Math.cos(anguloInicio);
+      const y1ext = cy - radioExt * Math.sin(anguloInicio);
+      const x2ext = cx + radioExt * Math.cos(anguloFin);
+      const y2ext = cy - radioExt * Math.sin(anguloFin);
+      const x1int = cx + radioInt * Math.cos(anguloFin);
+      const y1int = cy - radioInt * Math.sin(anguloFin);
+      const x2int = cx + radioInt * Math.cos(anguloInicio);
+      const y2int = cy - radioInt * Math.sin(anguloInicio);
+
+      const d = `M ${x1ext.toFixed(2)} ${y1ext.toFixed(2)} `
+        + `A ${radioExt} ${radioExt} 0 0 1 ${x2ext.toFixed(2)} ${y2ext.toFixed(2)} `
+        + `L ${x1int.toFixed(2)} ${y1int.toFixed(2)} `
+        + `A ${radioInt} ${radioInt} 0 0 0 ${x2int.toFixed(2)} ${y2int.toFixed(2)} Z`;
+
+      return { d, anguloFin };
+    }
+
+    async function cargarHemiciclo() {
+      const cont = document.getElementById('hemiciclo-contenedor');
+      try {
+        const [respEstad, respPartidos] = await Promise.all([
+          fetch('/api/admin/estadisticas'),
+          fetch('/api/bbdd/partidos')
+        ]);
+        const datosEstad = await respEstad.json();
+        const datosPartidos = await respPartidos.json();
+
+        if (!datosEstad.ok || datosEstad.resultados.length === 0) {
+          cont.innerHTML = '<div class="bbdd-vacio" style="color:#999; text-align:center; padding:20px;">No hay votos registrados aún para calcular el reparto de escaños.</div>';
+          return;
+        }
+
+        const candidaturas = datosEstad.resultados.filter(r =>
+          r.candidatura !== 'Voto en blanco' && r.candidatura !== 'Voto nulo'
+        );
+
+        if (candidaturas.length === 0) {
+          cont.innerHTML = '<div class="bbdd-vacio" style="color:#999; text-align:center; padding:20px;">No hay votos a candidaturas todavía.</div>';
+          return;
+        }
+
+        const escanosPorCandidatura = calcularDhontEnVivo(candidaturas, TOTAL_CONCEJALES_BURGOS);
+
+        const colorPorNombre = {};
+        if (datosPartidos.ok) {
+          datosPartidos.filas.forEach(p => { colorPorNombre[p.nombre] = p.color; });
+        }
+        const coloresReserva = ['#999999', '#777777', '#555555', '#333333'];
+        let indiceReserva = 0;
+
+        const conEscanos = candidaturas
+          .map(c => ({ nombre: c.candidatura, escanos: escanosPorCandidatura[c.candidatura] || 0 }))
+          .filter(c => c.escanos > 0)
+          .sort((a, b) => b.escanos - a.escanos);
+
+        if (conEscanos.length === 0) {
+          cont.innerHTML = '<div class="bbdd-vacio" style="color:#999; text-align:center; padding:20px;">Ninguna candidatura alcanza el umbral del 5% todavía.</div>';
+          return;
+        }
+
+        const radioExt = 180, radioInt = 100, cx = 200, cy = 200;
+        let anguloActual = Math.PI;
+        const segmentos = [];
+
+        conEscanos.forEach(c => {
+          const color = colorPorNombre[c.nombre] || coloresReserva[indiceReserva++ % coloresReserva.length];
+          const { d, anguloFin } = generarPathHemiciclo(c.escanos, TOTAL_CONCEJALES_BURGOS, radioExt, radioInt, cx, cy, anguloActual);
+          segmentos.push({ nombre: c.nombre, escanos: c.escanos, color, d });
+          anguloActual = anguloFin;
+        });
+
+        const pathsSvg = segmentos.map(s =>
+          `<path d="${s.d}" fill="${s.color}" stroke="#fff" stroke-width="2"><title>${s.nombre}: ${s.escanos} escaños</title></path>`
+        ).join('');
+
+        const leyenda = segmentos.map(s => `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block; width:14px; height:14px; background:${s.color}; border-radius:2px; flex-shrink:0;"></span>
+            <span style="font-size:13px;">${s.nombre} — <strong>${s.escanos}</strong></span>
+          </div>
+        `).join('');
+
+        cont.innerHTML = `
+          <div style="display:flex; align-items:center; gap:32px; flex-wrap:wrap;">
+            <svg viewBox="0 0 400 220" style="width:320px; flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+              ${pathsSvg}
+              <text x="200" y="195" text-anchor="middle" font-size="28" font-weight="700" fill="var(--negro)">${TOTAL_CONCEJALES_BURGOS}</text>
+              <text x="200" y="170" text-anchor="middle" font-size="11" fill="var(--texto-suave)" letter-spacing="1">CONCEJALES</text>
+            </svg>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${leyenda}
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        cont.innerHTML = '<div class="bbdd-vacio" style="color:#999; text-align:center; padding:20px;">Error de conexión.</div>';
+        console.error('Error cargando el hemiciclo:', e);
+      }
+    }
+
+    window.addEventListener('load', cargarEstadisticas);
+    window.addEventListener('load', cargarHemiciclo);
+
+    let temporizadorInactividad = null;
+
+    function reiniciarTemporizadorInactividad() {
+      if (temporizadorInactividad) clearTimeout(temporizadorInactividad);
+      temporizadorInactividad = setTimeout(cerrarSesionPorInactividad, 60000);
+    }
+
+    async function cerrarSesionPorInactividad() {
+      try {
+        await fetch('/api/logout_admin', { method: 'POST' });
+      } catch (e) {}
+      window.location.href = '/';
+    }
+
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evento => {
+      document.addEventListener(evento, reiniciarTemporizadorInactividad, { passive: true });
+    });
+    reiniciarTemporizadorInactividad();
+  </script>
+
+</body>
+</html>
