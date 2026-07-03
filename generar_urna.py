@@ -1,6 +1,14 @@
 
-# generar_urna.py
-# Crea la base de datos de la urna electoral (votos anónimos)
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    generar_urna.py
+# =============================================================
 
 import sqlite3
 import os
