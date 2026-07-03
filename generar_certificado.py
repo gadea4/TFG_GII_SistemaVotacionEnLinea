@@ -1,6 +1,14 @@
-# -*- coding: utf-8 -*-
-# generar_certificado.py
-# Genera el certificado PDF de confirmación de voto
+
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    generar_certificado.py
+# =============================================================
 
 import os
 import io
@@ -183,4 +191,3 @@ def generar_pdf_certificado(codigo, nombre, apellidos, dni, distrito, seccion, m
     doc.build(elementos)
     buffer.seek(0)
     return buffer.read()
-
