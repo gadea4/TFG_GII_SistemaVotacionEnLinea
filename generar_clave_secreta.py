@@ -1,8 +1,14 @@
 
-# generar_clave_secreta.py
-# Genera la clave secreta del servidor usada para calcular el hash de
-# control de unicidad de votantes (control_voto_hash.db).
-# Autora: Gadea Díez 
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    generar_clave_secreta.py
+# =============================================================
 
 import os
 import secrets
@@ -19,4 +25,3 @@ else:
         f.write(clave)
     print("Clave secreta generada correctamente en:", RUTA_CLAVE)
     print("Guárdala con cuidado y no la subas a ningún repositorio público.")
-
