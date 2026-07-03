@@ -1,4 +1,15 @@
-# Autora Gadea Díez 
+
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo: generar_censo.py
+# =============================================================
+
 
 import sqlite3
 import random
@@ -9,10 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "database", "censo_burgos.db")
 os.makedirs(os.path.join(BASE_DIR, "database"), exist_ok=True)
 
-# Número de votantes a generar: se puede indicar como argumento de
-# línea de comandos (py -3.11 generar_censo.py 50000). Si no se indica
-# nada, se usa el valor por defecto de 134.800 (tamaño real aproximado
-# del censo de Burgos capital).
+# Número de votantes a generar
 NUM_VOTANTES = 134800
 if len(sys.argv) > 1:
     try:
@@ -48,7 +56,7 @@ local TEXT
 )
 """)
 
-# 100 Nombres propios frecuentes en Burgos 
+# 100 Nombres propios frecuentes en Burgos y Castilla y León
 nombres = [
     # Masculinos
     "Antonio", "Manuel", "José", "Francisco", "David", "Juan", "Javier", "Daniel", "Carlos", "Miguel",
@@ -64,7 +72,7 @@ nombres = [
     "Guadalupe", "Ascensión", "Visitación", "Purificación", "Asunción", "Esperanza", "Rosario", "Milagros", "Inmaculada", "Presentación"
 ]
 
-# 100 Primeros apellidos frecuentes en Burgos 
+# 100 Primeros apellidos frecuentes en Burgos y Castilla y León
 apellidos1 = [
     "García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín",
     "Jiménez", "Ruiz", "Hernández", "Díaz", "Moreno", "Muñoz", "Álvarez", "Romero", "Alonso", "Gutiérrez",
@@ -78,7 +86,7 @@ apellidos1 = [
     "Olmedo", "Marcos", "Aparicio", "Madrigal", "Cabezón", "Espinosa", "Aranda", "Cardeña", "Lerma", "Covarrubias"
 ]
 
-# 100 Segundos apellidos frecuentes en Burgos 
+# 100 Segundos apellidos frecuentes en Burgos y Castilla y León
 apellidos2 = [
     "García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín",
     "Jiménez", "Ruiz", "Hernández", "Díaz", "Moreno", "Muñoz", "Álvarez", "Romero", "Alonso", "Gutiérrez",
@@ -92,7 +100,7 @@ apellidos2 = [
     "Olmedo", "Marcos", "Aparicio", "Madrigal", "Cabezón", "Espinosa", "Aranda", "Cardeña", "Lerma", "Covarrubias"
 ]
 
-# Calles + código postal asociado 
+# Calles + código postal asociado (50 calles reales de Burgos)
 calles_cp = {
     # 09001 — Zona oeste, Huelgas, Villalonquejar
     "Calle Madrid":                      "09001",
@@ -156,6 +164,7 @@ calles_cp = {
 
 calles = list(calles_cp.keys())
 
+# ── Organización electoral 
 
 # Locales electorales reales por distrito (extraídos del BOPBUR)
 locales_por_distrito = {

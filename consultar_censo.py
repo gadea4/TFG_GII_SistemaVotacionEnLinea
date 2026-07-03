@@ -1,8 +1,14 @@
 
-# FECHA: 15/05/2026
-#
-# Consulta el censo electoral en censo_burgos.db
-# Busca el DNI pasado por stdin y devuelve los datos del votante
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    consultar_censo.py
+# =============================================================
 
 import sqlite3
 import json
@@ -62,5 +68,3 @@ if __name__ == "__main__":
         print("ERROR: DNI vacío")
     else:
         print(consultar_censo(dni))
-
-
