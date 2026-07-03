@@ -1,7 +1,14 @@
 
-# generar_partidos.py
-# Crea la base de datos de partidos: letra, nombre, siglas, color y logo.
-# Es una tabla independiente de candidaturas_burgos.db
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    generar_partidos.py
+# =============================================================
 
 import sqlite3
 import os
@@ -51,4 +58,3 @@ def crear_partidos():
 
 if __name__ == "__main__":
     crear_partidos()
-

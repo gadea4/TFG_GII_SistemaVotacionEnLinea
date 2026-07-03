@@ -1,9 +1,14 @@
-# -*- coding: utf-8 -*-
-# generar_simulacion.py
-# Crea la base de datos de simulación con los resultados oficiales de las
-# elecciones municipales de Burgos del 28 de mayo de 2023.
-# Autora Gadea Díez
 
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    generar_simulacion.py
+# =============================================================
 
 import sqlite3
 import os
@@ -59,7 +64,7 @@ def crear_simulacion():
             (partido, siglas, votos, tipo, escanos, dif_escanos, porc_anterior, dif_votos)
         )
 
-
+    # Tabla de resumen 
     cur.execute("""
         CREATE TABLE resumen_2023 (
             id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,4 +87,3 @@ def crear_simulacion():
 
 if __name__ == "__main__":
     crear_simulacion()
-
