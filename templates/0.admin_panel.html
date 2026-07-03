@@ -4,6 +4,174 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun.css">
+  <style>
+/* ── CONTENIDO ── */
+.contenido {
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--blanco);
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.panel-body { padding: 28px 36px; flex: 1; }
+
+/* ── BOTÓN PRIMARIO ── */
+.btn-primario {
+  padding: 16px 48px;
+  background: var(--azul);
+  color: var(--blanco);
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primario:hover { background: var(--azul-oscuro); }
+.btn-primario:active { transform: scale(0.99); }
+.btn-primario:disabled, .btn-primario.inactivo {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ── BOTÓN SECUNDARIO ── */
+.btn-secundario {
+  padding: 9px 22px;
+  background: var(--blanco);
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--gris-borde);
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-secundario:hover { background: #f5f5f5; }
+
+/* ── OCULTO ── */
+.oculto { display: none !important; }
+
+/* ── ANIMACIÓN ── */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animar { animation: aparecer 0.3s ease both; }
+</style>
+  <style>
+    .admin-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 40px 50px;
+      flex: 1;
+      height: 100%;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(200px, 240px));
+      grid-template-rows: repeat(2, auto);
+      gap: 36px 48px;
+      max-width: 600px;
+    }
+
+    .admin-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--azul);
+      border: 1px solid var(--azul-oscuro);
+      border-radius: 4px;
+      padding: 32px 20px;
+      text-decoration: none;
+      color: var(--blanco);
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .admin-card:hover {
+      background: var(--azul-oscuro);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 122, 191, 0.3);
+    }
+    .admin-card-txt {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--blanco);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .admin-aviso-base {
+      background: var(--azul-fondo);
+      border-top: 4px solid var(--azul);
+      padding: 16px 40px;
+      font-size: 14px;
+      color: #2a5080;
+      line-height: 1.6;
+      text-align: center;
+      flex-shrink: 0;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── RESPONSIVE: TABLET (768px - 1024px) ── */
+    @media (max-width: 1024px) {
+      .hdr-top { padding: 10px 24px; }
+      .hdr-top-txt { font-size: 13px; }
+      .hdr-hora { font-size: 17px; }
+      .hdr-titulo { padding: 14px 24px; }
+      .hdr-titulo h1 { font-size: 20px; }
+      .hdr-titulo p { font-size: 13px; }
+      .contenido { padding: 16px 20px; }
+      .admin-panel { padding: 24px 16px 30px; }
+      .admin-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); grid-template-rows: none; gap: 16px; max-width: 100%; }
+      .admin-card { padding: 24px 14px; grid-column: auto !important; grid-row: auto !important; }
+      .admin-card-txt { font-size: 15px; }
+    }
+
+    /* ── RESPONSIVE: MÓVIL / TABLET PEQUEÑA (max 767px) ── */
+    @media (max-width: 767px) {
+      .hdr-top { flex-direction: column; gap: 8px; padding: 10px 16px; align-items: center; }
+      .hdr-top-der { align-items: center; }
+      .hdr-titulo h1 { font-size: 17px; letter-spacing: 0.03em; }
+      .tabs { flex-wrap: wrap; }
+      .tab { padding: 10px 14px; font-size: 12px; }
+      .admin-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); grid-template-rows: none; }
+      .admin-card { grid-column: auto !important; grid-row: auto !important; }
+      .admin-aviso-base { padding: 12px 16px; font-size: 13px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -40,16 +208,10 @@
           <a href="/simulacion" class="admin-card" style="grid-column: 2; grid-row: 1;">
             <div class="admin-card-txt">Simulación</div>
           </a>
-          <a href="/dhont" class="admin-card" style="grid-column: 2; grid-row: 2;">
-            <div class="admin-card-txt">Ley d'Hont</div>
-          </a>
-          <a href="/documentacion" class="admin-card" style="grid-column: 2; grid-row: 3;">
-            <div class="admin-card-txt">Documentación</div>
-          </a>
-          <a href="/auditoria" class="admin-card" style="grid-column: 3; grid-row: 1;">
+          <a href="/auditoria" class="admin-card" style="grid-column: 1; grid-row: 2;">
             <div class="admin-card-txt">Auditoría</div>
           </a>
-          <a href="/bbdd" class="admin-card" style="grid-column: 3; grid-row: 2;">
+          <a href="/bbdd" class="admin-card" style="grid-column: 2; grid-row: 2;">
             <div class="admin-card-txt">BBDD</div>
           </a>
         </div>
@@ -59,9 +221,47 @@
 
   </div>
 
-  <div class="admin-aviso-base">
-    <strong>ℹ Información:</strong> panel de administración del Sistema de Votación Electrónica. Acceso restringido.
-  </div>
+  <div class="admin-aviso-base"></div>
+
+  <script>
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+    tick(); setInterval(tick, 1000);
+
+    async function cerrarSesion(e) {
+      e.preventDefault();
+      await fetch('/api/logout_admin', { method: 'POST' });
+      window.location.href = '/';
+    }
+
+    // --- Cierre de sesión automático por inactividad (60 segundos) ---
+    let temporizadorInactividad = null;
+
+    function reiniciarTemporizadorInactividad() {
+      if (temporizadorInactividad) clearTimeout(temporizadorInactividad);
+      temporizadorInactividad = setTimeout(cerrarSesionPorInactividad, 60000);
+    }
+
+    async function cerrarSesionPorInactividad() {
+      try {
+        await fetch('/api/logout_admin', { method: 'POST' });
+      } catch (e) {
+        // Aunque falle la llamada al servidor, se redirige igualmente:
+        // lo importante es que la pantalla deje de mostrar datos de admin.
+      }
+      window.location.href = '/';
+    }
+
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evento => {
+      document.addEventListener(evento, reiniciarTemporizadorInactividad, { passive: true });
+    });
+    reiniciarTemporizadorInactividad();
+  </script>
 
 </body>
 </html>
