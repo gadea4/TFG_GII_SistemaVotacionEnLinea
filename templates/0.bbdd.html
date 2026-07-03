@@ -4,6 +4,354 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bases de Datos — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun.css">
+  <style>
+/* ── CONTENIDO ── */
+.contenido {
+  width: 100%;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--blanco);
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.panel-body { padding: 28px 36px; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+
+/* ── BOTÓN PRIMARIO ── */
+.btn-primario {
+  padding: 16px 48px;
+  background: var(--azul);
+  color: var(--blanco);
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primario:hover { background: var(--azul-oscuro); }
+.btn-primario:active { transform: scale(0.99); }
+.btn-primario:disabled, .btn-primario.inactivo {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ── BOTÓN SECUNDARIO ── */
+.btn-secundario {
+  padding: 9px 22px;
+  background: var(--blanco);
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--gris-borde);
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-secundario:hover { background: #f5f5f5; }
+
+/* ── OCULTO ── */
+.oculto { display: none !important; }
+
+/* ── ANIMACIÓN ── */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animar { animation: aparecer 0.3s ease both; }
+</style>
+  <style>
+    /* ── LAYOUT DOS COLUMNAS ── */
+    .panel-body-fila { display: flex; gap: 32px; flex: 1; min-height: 0; }
+    .panel-body-izq { flex: 0 0 220px; display: flex; flex-direction: column; gap: 10px; }
+    #bloque-izq-extra { flex: 1; display: flex; flex-direction: column; padding-top: 125px; gap: 10px; }
+    .panel-body-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+
+    .bbdd-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--azul);
+      color: var(--blanco);
+      padding: 10px 12px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: background 0.15s;
+      text-decoration: none;
+      width: 100%;
+    }
+    .bbdd-btn:hover { background: var(--azul-oscuro); }
+    .bbdd-btn-verde { background: var(--verde); }
+    .bbdd-btn-verde:hover { background: #1f6b42; }
+    .bbdd-btn-rojo { background: var(--rojo); }
+    .bbdd-btn-rojo:hover { background: #a02020; }
+    .bbdd-btn.activo { background: var(--azul-oscuro); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4); }
+
+    /* ── ESTADO VACÍO ── */
+    .bbdd-vacio {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    /* ── BUSCADOR CENSO ── */
+    .bbdd-buscador {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--gris-borde);
+      flex-shrink: 0;
+    }
+    .bbdd-buscador-campo { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
+    .bbdd-buscador-campo label {
+      font-size: 11px; font-weight: 700; color: var(--texto-suave);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .bbdd-buscador-campo input {
+      padding: 8px 10px; border: 2px solid #aaa; border-radius: 2px;
+      font-size: 13px; font-family: Arial, sans-serif; outline: none;
+    }
+    .bbdd-buscador-campo input:focus { border-color: var(--azul); }
+    .bbdd-select {
+      padding: 8px 10px; border: 2px solid #aaa; border-radius: 2px;
+      font-size: 13px; font-family: Arial, sans-serif; outline: none;
+      background: #fff; cursor: pointer; width: 220px;
+    }
+    .bbdd-select:focus { border-color: var(--azul); }
+    .bbdd-buscador .bbdd-btn { width: auto; padding: 9px 22px; font-size: 13px; flex-shrink: 0; }
+
+    /* ── CREAR CENSO ── */
+    .bbdd-crear-censo-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 132px;
+    }
+    .bbdd-crear-censo-campo label {
+      font-size: 11px; font-weight: 700; color: var(--texto-suave);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .bbdd-crear-censo-campo {
+      overflow: visible;
+    }
+    .bbdd-crear-censo-campo input {
+      width: 100%;
+      height: 27px;
+      box-sizing: border-box;
+      padding: 4px 6px;
+      border: 2px solid #aaa;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: Arial, sans-serif;
+      text-align: right;
+      color: var(--azul);
+      background: var(--blanco);
+      outline: none;
+    }
+    .bbdd-crear-censo-campo input:focus { border-color: var(--azul); }
+    .bbdd-crear-censo-msg {
+      display: none;
+      font-size: 13px; padding: 8px 12px; border-radius: 0 2px 2px 0;
+      border-left: 4px solid;
+    }
+    .bbdd-crear-censo-msg.ok    { background: var(--verde-fondo); border-color: var(--verde); color: #1a5a35; }
+    .bbdd-crear-censo-msg.error { background: var(--rojo-fondo); border-color: var(--rojo); color: var(--rojo); }
+
+    /* ── CABECERA DE GRILLA (título + añadir) ── */
+    .bbdd-grilla-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .bbdd-grilla-titulo { font-size: 13px; font-weight: 700; color: var(--texto-suave); letter-spacing: 0.04em; text-transform: uppercase; }
+    .bbdd-btn-anadir {
+      width: auto; padding: 8px 18px; font-size: 12px;
+      background: var(--verde);
+    }
+    .bbdd-btn-anadir:hover { background: #1f6b42; }
+
+    /* ── GRILLA / TABLA ── */
+    .bbdd-tabla-wrap { flex: 1; min-height: 0; overflow: auto; border: 2px solid #999; border-radius: 2px; }
+    table.bbdd-tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.bbdd-tabla th {
+      background: var(--gris-panel);
+      padding: 6px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--texto-suave);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid #999;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+    table.bbdd-tabla td {
+      padding: 5px 12px;
+      border: 1px solid #ccc;
+      white-space: nowrap;
+    }
+    table.bbdd-tabla tbody tr:nth-child(odd)  td { background: #ffffff; }
+    table.bbdd-tabla tbody tr:nth-child(even) td { background: #f8c8b8; }
+    table.bbdd-tabla tr:hover td { background: var(--azul-fondo); cursor: pointer; }
+    .bbdd-color-chip { display: inline-block; width: 14px; height: 14px; border-radius: 2px; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(0,0,0,0.15); }
+
+    .bbdd-resultado-info { font-size: 12px; color: var(--texto-suave); flex-shrink: 0; }
+
+    /* ── MODAL EDICIÓN ── */
+    .modal-fondo {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; z-index: 100;
+    }
+    .modal-box {
+      background: #fff; border-radius: 2px; padding: 20px 28px;
+      width: 100%; max-width: 480px;
+      max-height: 85vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .modal-titulo { font-size: 16px; font-weight: 700; color: var(--negro); margin-bottom: 2px; }
+    .modal-campo { display: flex; flex-direction: column; gap: 2px; }
+    .modal-campo label {
+      font-size: 10px; font-weight: 700; color: var(--texto-suave);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .modal-campo input {
+      padding: 5px 10px; border: 2px solid #aaa; border-radius: 2px;
+      font-size: 13px; font-family: Arial, sans-serif; outline: none;
+    }
+    .modal-campo input:focus { border-color: var(--azul); }
+    .modal-campo input[type="color"] { padding: 4px; height: 32px; cursor: pointer; }
+    .modal-msg {
+      font-size: 13px; padding: 8px 12px; border-radius: 0 2px 2px 0;
+      border-left: 4px solid;
+    }
+    .modal-msg.ok    { background: var(--verde-fondo); border-color: var(--verde); color: #1a5a35; }
+    .modal-msg.error { background: #fff5f5; border-color: #c0392b; color: #c0392b; }
+    .modal-btns { display: flex; gap: 10px; justify-content: space-between; margin-top: 4px; }
+    .modal-btns-der { display: flex; gap: 10px; }
+    .btn-sm { padding: 9px 18px; font-size: 13px; font-weight: 700; border: none; border-radius: 2px; cursor: pointer; letter-spacing: 0.03em; text-transform: uppercase; }
+    .btn-sm-eliminar { background: var(--rojo); color: white; }
+    .btn-sm-eliminar:hover { background: #a02020; }
+    .btn-sm-cancelar { background: #eee; color: var(--texto); }
+    .btn-sm-cancelar:hover { background: #ddd; }
+    .btn-sm-guardar { background: var(--azul); color: white; }
+    .btn-sm-guardar:hover { background: var(--azul-oscuro); }
+
+    /* ── MODAL DE CONFIRMACIÓN (distinto del modal de edición) ── */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 110;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-overlay.activo { display: flex; }
+    .confirm-box {
+      background: #fff;
+      border-radius: 2px;
+      padding: 28px 32px;
+      max-width: 480px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .confirm-cabecera { display: flex; align-items: center; gap: 14px; }
+    .confirm-icono-aviso { width: 56px; height: 56px; flex-shrink: 0; }
+    .confirm-icono-aviso svg { width: 100%; height: 100%; }
+    .confirm-titulo { flex: 1; font-size: 22px; font-weight: 700; color: var(--negro); text-align: center; }
+    .confirm-sub    { font-size: 15px; font-weight: 700; color: var(--negro); line-height: 1.7; margin-top: 8px; }
+    .confirm-check-extra {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--rojo);
+      background: var(--rojo-fondo);
+      border: 1px solid var(--rojo-borde);
+      border-radius: 2px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .confirm-check-extra input { cursor: pointer; }
+    .confirm-btns   { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn-confirm { padding: 8px 18px; font-size: 13px; font-weight: 700; border: none; border-radius: 2px; cursor: pointer; color: #fff; }
+    .btn-confirm-rojo { background: var(--rojo); }
+    .btn-confirm-rojo:hover { background: #a02020; }
+    .btn-confirm:disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; }
+
+    /* ── RESPONSIVE: TABLET (768px - 1024px) ── */
+    @media (max-width: 1024px) {
+      .hdr-top { padding: 10px 24px; }
+      .hdr-top-txt { font-size: 13px; }
+      .hdr-hora { font-size: 17px; }
+      .hdr-titulo { padding: 14px 24px; }
+      .hdr-titulo h1 { font-size: 20px; }
+      .hdr-titulo p { font-size: 13px; }
+      .contenido { padding: 16px 20px; }
+      .panel-body { padding: 18px 20px; }
+      .panel-body-fila { gap: 18px; }
+    }
+
+    /* ── RESPONSIVE: MÓVIL / TABLET PEQUEÑA (max 767px) ── */
+    @media (max-width: 767px) {
+      .hdr-top { flex-direction: column; gap: 8px; padding: 10px 16px; align-items: center; }
+      .hdr-top-der { align-items: center; }
+      .hdr-titulo h1 { font-size: 17px; letter-spacing: 0.03em; }
+      .tabs { flex-wrap: wrap; }
+      .tab { padding: 10px 14px; font-size: 12px; }
+      .panel-body-fila { flex-direction: column; }
+      .panel-body-izq { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; }
+      #bloque-izq-extra { flex-direction: column; flex-basis: 100%; }
+      .bbdd-btn { width: auto; flex: 1; }
+    }
+  </style>
 </head>
 <body>
 
@@ -35,10 +383,11 @@
 
         <div class="panel-body-fila">
 
-          <div class="panel-body-izq">
+          <div class="panel-body-izq" id="panel-body-izq">
             <button class="bbdd-btn" id="btn-bd-censo" onclick="seleccionarBD('censo')">Censo</button>
             <button class="bbdd-btn" id="btn-bd-partidos" onclick="seleccionarBD('partidos')">Partidos</button>
             <button class="bbdd-btn" id="btn-bd-candidaturas" onclick="seleccionarBD('candidaturas')">Candidaturas</button>
+            <div id="bloque-izq-extra"></div>
           </div>
 
           <div class="panel-body-der" id="panel-der">
@@ -59,7 +408,767 @@
     </div>
   </div>
 
+  <!-- MODAL DE CONFIRMACIÓN -->
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+      <div class="confirm-cabecera">
+        <div class="confirm-icono-aviso">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="confirm-icono-sombra" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.2"/>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="44" fill="#e53935" filter="url(#confirm-icono-sombra)"/>
+            <rect x="44.5" y="26" width="11" height="34" rx="5.5" fill="#fff"/>
+            <circle cx="50" cy="72" r="6.5" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="confirm-titulo" id="confirm-titulo">Crear censo</div>
+      </div>
+      <div class="confirm-sub" id="confirm-sub">¿Está seguro de que desea realizar esta acción?</div>
+      <label class="confirm-check-extra oculto" id="confirm-check-extra">
+        <input type="checkbox" id="confirm-checkbox" onchange="actualizarBotonConfirmar()">
+        <span id="confirm-check-texto">Eliminar TODAS LAS CANDIDATURAS</span>
+      </label>
+      <div class="confirm-btns">
+        <button class="btn-confirm" style="background:#eee;color:#333;" onclick="cerrarConfirmCenso()">Cancelar</button>
+        <button class="btn-confirm btn-confirm-rojo" id="confirm-btn-aceptar" onclick="ejecutarConfirmPendiente()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+    tick(); setInterval(tick, 1000);
+
+    let bdActual = null;
+
+    // toLocaleString('es-ES') no es fiable: algunos navegadores no añaden
+    // el separador de miles para números de 4 cifras (1.000-9.999). Esta
+    // función propia garantiza el punto de miles siempre.
+    function formatoMiles(numero) {
+      return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function formatearCampoNumVotantes(input) {
+      const soloDigitos = input.value.replace(/[^\d]/g, '');
+      input.value = soloDigitos ? formatoMiles(parseInt(soloDigitos, 10)) : '';
+    }
+
+    // ── Definición de columnas y campos por cada base de datos ──
+    const CONFIG_BD = {
+      censo: {
+        titulo: 'Censo electoral',
+        columnas: [
+          { campo: 'id', label: 'ID' },
+          { campo: 'nombre', label: 'Nombre' },
+          { campo: 'apellido1', label: 'Apellido 1' },
+          { campo: 'apellido2', label: 'Apellido 2' },
+          { campo: 'dni', label: 'DNI' },
+          { campo: 'direccion', label: 'Dirección' },
+          { campo: 'codigo_postal', label: 'C.P.' },
+          { campo: 'ciudad', label: 'Ciudad' },
+          { campo: 'distrito', label: 'Distrito' },
+          { campo: 'seccion', label: 'Sección' },
+          { campo: 'mesa', label: 'Mesa' },
+          { campo: 'local', label: 'Local' },
+        ],
+        camposEdicion: [
+          { campo: 'nombre', label: 'Nombre' },
+          { campo: 'apellido1', label: 'Primer apellido' },
+          { campo: 'apellido2', label: 'Segundo apellido' },
+          { campo: 'dni', label: 'DNI' },
+          { campo: 'direccion', label: 'Dirección' },
+          { campo: 'codigo_postal', label: 'Código postal' },
+          { campo: 'ciudad', label: 'Ciudad' },
+          { campo: 'distrito', label: 'Distrito' },
+          { campo: 'seccion', label: 'Sección' },
+          { campo: 'mesa', label: 'Mesa' },
+          { campo: 'local', label: 'Local electoral' },
+        ],
+        endpointBase: '/api/bbdd/censo',
+        tieneBuscador: true
+      },
+      partidos: {
+        titulo: 'Partidos',
+        columnas: [
+          { campo: 'id', label: 'ID' },
+          { campo: 'letra', label: 'Letra' },
+          { campo: 'nombre', label: 'Nombre' },
+          { campo: 'siglas', label: 'Siglas' },
+          { campo: 'color', label: 'Color', tipo: 'color' },
+        ],
+        camposEdicion: [
+          { campo: 'letra', label: 'Letra' },
+          { campo: 'nombre', label: 'Nombre del partido' },
+          { campo: 'siglas', label: 'Siglas' },
+          { campo: 'color', label: 'Color', tipo: 'color' },
+        ],
+        endpointBase: '/api/bbdd/partidos',
+        tieneBuscador: false
+      },
+      candidaturas: {
+        titulo: 'Candidaturas',
+        columnas: [
+          { campo: 'id', label: 'ID' },
+          { campo: 'candidatura', label: 'Candidatura' },
+          { campo: 'posicion', label: 'Posición' },
+          { campo: 'tipo', label: 'Tipo' },
+          { campo: 'nombre', label: 'Nombre' },
+          { campo: 'apellido1', label: 'Apellido 1' },
+          { campo: 'apellido2', label: 'Apellido 2' },
+        ],
+        camposEdicion: [
+          { campo: 'candidatura', label: 'Candidatura (A-F)' },
+          { campo: 'posicion', label: 'Posición' },
+          { campo: 'tipo', label: 'Tipo (titular/suplente)' },
+          { campo: 'nombre', label: 'Nombre' },
+          { campo: 'apellido1', label: 'Primer apellido' },
+          { campo: 'apellido2', label: 'Segundo apellido' },
+        ],
+        endpointBase: '/api/bbdd/candidaturas',
+        tieneBuscador: false
+      }
+    };
+
+    async function seleccionarBD(bd) {
+      bdActual = bd;
+      ['censo', 'partidos', 'candidaturas'].forEach(id => {
+        document.getElementById('btn-bd-' + id).classList.toggle('activo', id === bd);
+      });
+
+      const cfg = CONFIG_BD[bd];
+      const panelDer = document.getElementById('panel-der');
+      const bloqueIzqExtra = document.getElementById('bloque-izq-extra');
+
+      if (bd === 'censo') {
+        bloqueIzqExtra.innerHTML = `
+          <div class="bbdd-crear-censo-campo">
+            <label>Nº VOTANTES A CREAR</label>
+            <input type="text" inputmode="numeric" id="input-num-votantes" value="134.800" oninput="formatearCampoNumVotantes(this)">
+          </div>
+          <button class="bbdd-btn bbdd-btn-rojo" style="width:132px; padding:8px 6px; font-size:13px;" onclick="crearCenso()">Crear censo</button>
+          <button class="bbdd-btn bbdd-btn-verde" style="width:132px; padding:8px 6px; font-size:13px;" onclick="abrirModalNuevo('censo')">INSERTAR</button>
+          <div class="bbdd-crear-censo-msg" id="msg-crear-censo"></div>
+        `;
+      } else if (bd === 'partidos') {
+        bloqueIzqExtra.innerHTML = `
+          <div class="bbdd-crear-censo-campo" style="visibility:hidden;">
+            <label>Nº VOTANTES A CREAR</label>
+            <input type="text" value="134.800" tabindex="-1">
+          </div>
+          <button class="bbdd-btn bbdd-btn-verde" style="width:132px; padding:8px 6px; font-size:13px; visibility:hidden;" tabindex="-1">Crear censo</button>
+          <button class="bbdd-btn bbdd-btn-verde" style="width:132px; padding:8px 6px; font-size:13px;" onclick="abrirModalNuevo('partidos')">INSERTAR</button>
+        `;
+      } else if (bd === 'candidaturas') {
+        bloqueIzqExtra.innerHTML = `
+          <div class="bbdd-crear-censo-campo">
+            <label>Partidos</label>
+            <select id="select-candidatura" class="bbdd-select" style="width:220px; height:27px; box-sizing:border-box; padding:4px 6px; font-size:13px;">
+              <option value="">Cargando...</option>
+            </select>
+          </div>
+          <button class="bbdd-btn bbdd-btn-rojo" style="width:132px; padding:8px 6px; font-size:13px;" onclick="confirmarRegenerarCandidaturas()">RESET</button>
+          <button class="bbdd-btn bbdd-btn-verde" style="width:132px; padding:8px 6px; font-size:13px;" onclick="abrirModalNuevo('candidaturas')">INSERTAR</button>
+          <div class="bbdd-crear-censo-msg" id="msg-regenerar-candidaturas"></div>
+        `;
+      } else {
+        bloqueIzqExtra.innerHTML = '';
+      }
+
+      if (cfg.tieneBuscador) {
+        panelDer.innerHTML = `
+          <div class="bbdd-buscador">
+            <div class="bbdd-buscador-campo">
+              <input type="text" id="buscar-dni" placeholder="DNI">
+            </div>
+            <div class="bbdd-buscador-campo">
+              <input type="text" id="buscar-nombre" placeholder="Nombre">
+            </div>
+            <div class="bbdd-buscador-campo">
+              <input type="text" id="buscar-apellido1" placeholder="Primer apellido">
+            </div>
+            <div class="bbdd-buscador-campo">
+              <input type="text" id="buscar-apellido2" placeholder="Segundo apellido">
+            </div>
+            <button class="bbdd-btn bbdd-btn-verde" style="width:110px;" onclick="buscarCenso()">Buscar</button>
+          </div>
+          <div class="bbdd-grilla-hdr">
+            <div class="bbdd-grilla-titulo">${cfg.titulo}</div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div class="bbdd-resultado-info" id="bbdd-resultado-info"></div>
+            </div>
+          </div>
+          <div class="bbdd-tabla-wrap" id="bbdd-tabla-wrap">
+            <div class="bbdd-vacio">Introduzca al menos un criterio y pulse Buscar.</div>
+          </div>
+        `;
+        ['buscar-dni','buscar-nombre','buscar-apellido1','buscar-apellido2'].forEach(id => {
+          document.getElementById(id).addEventListener('keydown', e => {
+            if (e.key === 'Enter') buscarCenso();
+          });
+        });
+      } else if (bd === 'candidaturas') {
+        panelDer.innerHTML = `
+          <div class="bbdd-grilla-hdr">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div class="bbdd-grilla-titulo">${cfg.titulo}</div>
+              <div class="bbdd-resultado-info" id="bbdd-resultado-info"></div>
+            </div>
+          </div>
+          <div class="bbdd-tabla-wrap" id="bbdd-tabla-wrap">
+            <div class="bbdd-vacio">Cargando datos...</div>
+          </div>
+        `;
+        await cargarSelectorCandidaturas();
+      } else {
+        panelDer.innerHTML = `
+          <div class="bbdd-grilla-hdr">
+            <div class="bbdd-grilla-titulo">${cfg.titulo}</div>
+          </div>
+          <div class="bbdd-tabla-wrap" id="bbdd-tabla-wrap">
+            <div class="bbdd-vacio">Cargando datos...</div>
+          </div>
+        `;
+        await cargarListado(bd);
+      }
+    }
+
+    async function cargarSelectorCandidaturas() {
+      const select = document.getElementById('select-candidatura');
+      const wrap = document.getElementById('bbdd-tabla-wrap');
+      try {
+        // 1. Cargar todos los candidatos (es poco volumen, hasta unos
+        //    cientos de registros) para poder filtrar en el cliente
+        const respCand = await fetch('/api/bbdd/candidaturas');
+        const datosCand = await respCand.json();
+        if (!datosCand.ok) {
+          wrap.innerHTML = `<div class="bbdd-vacio">${datosCand.error || 'Error al cargar los datos'}</div>`;
+          return;
+        }
+        window._bbddFilasCache = window._bbddFilasCache || {};
+        window._bbddFilasCache['candidaturas'] = datosCand.filas;
+
+        // 2. Las opciones del desplegable salen de la tabla de PARTIDOS,
+        //    no de los candidatos: así, una candidatura recién creada en
+        //    "Partidos" aparece aquí de inmediato aunque todavía no tenga
+        //    ningún candidato asignado. Se muestra el NOMBRE del partido
+        //    al usuario, manteniendo la LETRA como valor interno (es lo
+        //    que necesita el filtrado y el resto de la lógica).
+        const respPart = await fetch('/api/bbdd/partidos');
+        const datosPart = await respPart.json();
+        const partidos = datosPart.ok
+          ? [...datosPart.filas].sort((a, b) => a.letra.localeCompare(b.letra))
+          : [...new Set(datosCand.filas.map(f => f.candidatura))].sort().map(l => ({ letra: l, nombre: 'Candidatura ' + l }));
+
+        if (partidos.length === 0) {
+          select.innerHTML = '<option value="">No hay partidos</option>';
+          wrap.innerHTML = '<div class="bbdd-vacio">No hay partidos registrados. Cree uno primero en la sección "Partidos".</div>';
+          return;
+        }
+
+        select.innerHTML = '<option value="">Selecciona un partido</option>' +
+          partidos.map(p => `<option value="${p.letra}">${p.nombre}</option>`).join('');
+
+        select.addEventListener('change', () => filtrarPorCandidatura(select.value));
+
+        wrap.innerHTML = '<div class="bbdd-vacio">Selecciona un partido para ver los integrantes de su candidatura.</div>';
+      } catch (e) {
+        wrap.innerHTML = `<div class="bbdd-vacio">Error de conexión: ${e.message}</div>`;
+      }
+    }
+
+    async function recargarFilasCandidaturasYFiltrar(letra) {
+      try {
+        const resp = await fetch('/api/bbdd/candidaturas');
+        const datos = await resp.json();
+        if (datos.ok) {
+          window._bbddFilasCache = window._bbddFilasCache || {};
+          window._bbddFilasCache['candidaturas'] = datos.filas;
+        }
+      } catch (e) {
+        console.error('Error al recargar candidaturas:', e);
+      }
+      filtrarPorCandidatura(letra);
+    }
+
+    function filtrarPorCandidatura(letra) {
+      const wrap = document.getElementById('bbdd-tabla-wrap');
+      const info = document.getElementById('bbdd-resultado-info');
+      const todasLasFilas = (window._bbddFilasCache && window._bbddFilasCache['candidaturas']) || [];
+
+      if (!letra) {
+        wrap.innerHTML = '<div class="bbdd-vacio">Selecciona un partido para ver los integrantes de su candidatura.</div>';
+        info.textContent = '';
+        return;
+      }
+
+      const filtradas = todasLasFilas.filter(f => f.candidatura === letra);
+      info.textContent = `${filtradas.length} integrante(s)`;
+      renderizarTabla('candidaturas', filtradas, todasLasFilas);
+    }
+
+    let accionConfirmPendiente = null;
+
+    function crearCenso() {
+      const numVotantes = document.getElementById('input-num-votantes').value.replace(/\./g, '');
+      accionConfirmPendiente = 'crear_censo';
+      document.getElementById('confirm-titulo').textContent = 'Crear censo';
+      document.getElementById('confirm-sub').innerHTML =
+        `Eliminar censo en uso<br>Crear nuevo censo con ${formatoMiles(parseInt(numVotantes || '0', 10))} votantes<br>Eliminando los votos registrados`;
+      mostrarCheckExtra('Crear nuevo censo');
+      document.getElementById('confirm-overlay').classList.add('activo');
+    }
+
+    function confirmarRegenerarCandidaturas() {
+      accionConfirmPendiente = 'regenerar_candidaturas';
+      const select = document.getElementById('select-candidatura');
+      const letra = select ? select.value : '';
+      const nombrePartido = (letra && select.options[select.selectedIndex]) ? select.options[select.selectedIndex].text : '';
+
+      document.getElementById('confirm-titulo').textContent = '¡Eliminar candidaturas!';
+      if (letra) {
+        document.getElementById('confirm-sub').textContent =
+          `Eliminando candidatura del ${nombrePartido}`;
+        ocultarCheckExtra();
+      } else {
+        document.getElementById('confirm-sub').innerHTML =
+          'No hay ningún partido seleccionado<br>Se eliminarán TODAS LAS CANDIDATURAS';
+        mostrarCheckExtra('Eliminar TODAS LAS CANDIDATURAS');
+      }
+      document.getElementById('confirm-overlay').classList.add('activo');
+    }
+
+    function mostrarCheckExtra(texto) {
+      document.getElementById('confirm-checkbox').checked = false;
+      document.getElementById('confirm-check-texto').textContent = texto;
+      document.getElementById('confirm-check-extra').classList.remove('oculto');
+      document.getElementById('confirm-btn-aceptar').disabled = true;
+    }
+
+    function ocultarCheckExtra() {
+      document.getElementById('confirm-check-extra').classList.add('oculto');
+      document.getElementById('confirm-btn-aceptar').disabled = false;
+    }
+
+    function actualizarBotonConfirmar() {
+      const marcado = document.getElementById('confirm-checkbox').checked;
+      document.getElementById('confirm-btn-aceptar').disabled = !marcado;
+    }
+
+    function cerrarConfirmCenso() {
+      accionConfirmPendiente = null;
+      document.getElementById('confirm-overlay').classList.remove('activo');
+    }
+
+    async function ejecutarConfirmPendiente() {
+      const accion = accionConfirmPendiente;
+      cerrarConfirmCenso();
+      if (accion === 'crear_censo') {
+        await ejecutarCrearCenso();
+      } else if (accion === 'regenerar_candidaturas') {
+        await ejecutarRegenerarCandidaturas();
+      }
+    }
+
+    async function ejecutarCrearCenso() {
+      const numVotantes = document.getElementById('input-num-votantes').value.replace(/\./g, '').trim();
+      const msgEl = document.getElementById('msg-crear-censo');
+
+      try {
+        const resp = await fetch('/api/admin/regenerar_censo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ num_votantes: numVotantes })
+        });
+        const datos = await resp.json();
+        msgEl.textContent = datos.mensaje || (datos.ok ? 'Censo creado correctamente.' : 'Error al crear el censo.');
+        msgEl.className = 'bbdd-crear-censo-msg ' + (datos.ok ? 'ok' : 'error');
+        msgEl.style.display = 'block';
+      } catch (e) {
+        msgEl.textContent = 'Error de conexión: ' + e.message;
+        msgEl.className = 'bbdd-crear-censo-msg error';
+        msgEl.style.display = 'block';
+      }
+    }
+
+    async function ejecutarRegenerarCandidaturas() {
+      const msgEl = document.getElementById('msg-regenerar-candidaturas');
+      const select = document.getElementById('select-candidatura');
+      const letra = select ? select.value : '';
+
+      try {
+        const resp = await fetch('/api/admin/regenerar_candidaturas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ letra: letra })
+        });
+        const datos = await resp.json();
+        msgEl.textContent = datos.mensaje || (datos.ok ? 'Candidaturas regeneradas correctamente.' : 'Error al regenerar las candidaturas.');
+        msgEl.className = 'bbdd-crear-censo-msg ' + (datos.ok ? 'ok' : 'error');
+        msgEl.style.display = 'block';
+
+        // Si la candidatura regenerada es la que se está viendo en la
+        // grilla, recargar los datos frescos del servidor (la caché en
+        // memoria quedó desactualizada tras el reset) y refrescar la vista.
+        if (datos.ok && letra) {
+          await recargarFilasCandidaturasYFiltrar(letra);
+        }
+      } catch (e) {
+        msgEl.textContent = 'Error de conexión: ' + e.message;
+        msgEl.className = 'bbdd-crear-censo-msg error';
+        msgEl.style.display = 'block';
+      }
+    }
+
+    async function buscarCenso() {
+      const dni = document.getElementById('buscar-dni').value.trim();
+      const nombre = document.getElementById('buscar-nombre').value.trim();
+      const apellido1 = document.getElementById('buscar-apellido1').value.trim();
+      const apellido2 = document.getElementById('buscar-apellido2').value.trim();
+
+      const wrap = document.getElementById('bbdd-tabla-wrap');
+      const info = document.getElementById('bbdd-resultado-info');
+
+      if (!dni && !nombre && !apellido1 && !apellido2) {
+        wrap.innerHTML = '<div class="bbdd-vacio">Introduzca al menos un criterio y pulse Buscar.</div>';
+        info.textContent = '';
+        return;
+      }
+
+      wrap.innerHTML = '<div class="bbdd-vacio">Buscando...</div>';
+
+      try {
+        const params = new URLSearchParams({ dni, nombre, apellido1, apellido2 });
+        const resp = await fetch('/api/bbdd/censo/buscar?' + params.toString());
+        const datos = await resp.json();
+
+        if (!datos.ok) {
+          wrap.innerHTML = `<div class="bbdd-vacio">${datos.error || 'Error en la búsqueda'}</div>`;
+          info.textContent = '';
+          return;
+        }
+
+        if (datos.filas.length === 0) {
+          wrap.innerHTML = '<div class="bbdd-vacio">No se encontraron resultados.</div>';
+          info.textContent = '';
+          return;
+        }
+
+        info.textContent = datos.truncado
+          ? `Mostrando 200 de ${datos.total} resultados. Refine la búsqueda.`
+          : `${datos.total} resultado(s)`;
+
+        renderizarTabla('censo', datos.filas);
+      } catch (e) {
+        wrap.innerHTML = `<div class="bbdd-vacio">Error de conexión: ${e.message}</div>`;
+      }
+    }
+
+    async function cargarListado(bd) {
+      const cfg = CONFIG_BD[bd];
+      const wrap = document.getElementById('bbdd-tabla-wrap');
+      try {
+        const resp = await fetch(cfg.endpointBase);
+        const datos = await resp.json();
+
+        if (!datos.ok) {
+          wrap.innerHTML = `<div class="bbdd-vacio">${datos.error || 'Error al cargar los datos'}</div>`;
+          return;
+        }
+        if (datos.filas.length === 0) {
+          wrap.innerHTML = '<div class="bbdd-vacio">No hay registros. Pulse "INSERTAR" para crear el primero.</div>';
+          return;
+        }
+        renderizarTabla(bd, datos.filas);
+      } catch (e) {
+        wrap.innerHTML = `<div class="bbdd-vacio">Error de conexión: ${e.message}</div>`;
+      }
+    }
+
+    function renderizarTabla(bd, filas, filasCompletas) {
+      const cfg = CONFIG_BD[bd];
+      const wrap = document.getElementById('bbdd-tabla-wrap');
+
+      const thead = '<thead><tr>' + cfg.columnas.map(c => `<th>${c.label}</th>`).join('') + '</tr></thead>';
+
+      if (filas.length === 0) {
+        wrap.innerHTML = '<div class="bbdd-vacio">No hay registros para esta selección.</div>';
+        return;
+      }
+
+      const tbody = '<tbody>' + filas.map(fila => {
+        const celdas = cfg.columnas.map(c => {
+          if (c.tipo === 'color') {
+            return `<td><span class="bbdd-color-chip" style="background:${fila[c.campo] || '#ccc'};"></span></td>`;
+          }
+          return `<td>${fila[c.campo] !== null && fila[c.campo] !== undefined ? fila[c.campo] : ''}</td>`;
+        }).join('');
+        return `<tr ondblclick='abrirModalEditar("${bd}", ${fila.id})'>${celdas}</tr>`;
+      }).join('') + '</tbody>';
+
+      wrap.innerHTML = `<table class="bbdd-tabla">${thead}${tbody}</table>`;
+
+      // Si se pasan las filas completas (caso de candidaturas filtradas
+      // por el desplegable), se guardan esas en el caché en lugar de las
+      // filas mostradas, para que abrirModalEditar pueda seguir
+      // encontrando cualquier registro aunque no esté visible ahora mismo.
+      window._bbddFilasCache = window._bbddFilasCache || {};
+      window._bbddFilasCache[bd] = filasCompletas || filas;
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-fondo').classList.add('oculto');
+    }
+
+    function abrirModalNuevo(bd) {
+      const cfg = CONFIG_BD[bd];
+
+      // En Candidaturas, el partido ya está elegido en el desplegable de
+      // la pantalla: se prerellena ese campo y se bloquea su edición,
+      // para que el nuevo candidato se añada siempre a esa candidatura.
+      // Al usuario se le muestra el NOMBRE del partido (más legible),
+      // pero el valor real que se envía al guardar sigue siendo la LETRA
+      // (lo que necesita la base de datos y el resto del sistema), guardada
+      // en un campo oculto aparte.
+      let letraPreseleccionada = '';
+      let nombrePreseleccionado = '';
+      if (bd === 'candidaturas') {
+        const selectActivo = document.getElementById('select-candidatura');
+        if (selectActivo && selectActivo.value) {
+          letraPreseleccionada = selectActivo.value;
+          nombrePreseleccionado = selectActivo.selectedOptions[0].text;
+        }
+      }
+
+      const camposHtml = cfg.camposEdicion.map(c => {
+        const esCandidaturaBloqueada = (bd === 'candidaturas' && c.campo === 'candidatura' && letraPreseleccionada);
+
+        if (esCandidaturaBloqueada) {
+          return `
+        <div class="modal-campo">
+          <label>${c.label}</label>
+          <input type="text" id="modal-campo-${c.campo}-visible"
+            value="${nombrePreseleccionado}" readonly style="background:#f0f0f0; color:#666;">
+          <input type="hidden" id="modal-campo-${c.campo}" value="${letraPreseleccionada}">
+        </div>
+      `;
+        }
+
+        const valorInicial = c.tipo === 'color' ? '#3a7abf' : '';
+        return `
+        <div class="modal-campo">
+          <label>${c.label}</label>
+          <input type="${c.tipo === 'color' ? 'color' : 'text'}" id="modal-campo-${c.campo}" value="${valorInicial}">
+        </div>
+      `;
+      }).join('');
+
+      document.getElementById('modal-box').innerHTML = `
+        <div class="modal-titulo">Añadir registro — ${cfg.titulo}</div>
+        ${camposHtml}
+        <div class="modal-msg oculto" id="modal-msg"></div>
+        <div class="modal-btns">
+          <button class="btn-sm btn-sm-cancelar" onclick="cerrarModal()">Cancelar</button>
+          <div class="modal-btns-der">
+            <button class="btn-sm btn-sm-guardar" onclick="guardarNuevo('${bd}')">Crear</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal-fondo').classList.remove('oculto');
+    }
+
+    function abrirModalEditar(bd, id) {
+      const cfg = CONFIG_BD[bd];
+      const filas = (window._bbddFilasCache && window._bbddFilasCache[bd]) || [];
+      const fila = filas.find(f => f.id === id);
+      if (!fila) return;
+
+      const camposHtml = cfg.camposEdicion.map(c => `
+        <div class="modal-campo">
+          <label>${c.label}</label>
+          <input type="${c.tipo === 'color' ? 'color' : 'text'}" id="modal-campo-${c.campo}" value="${fila[c.campo] !== null && fila[c.campo] !== undefined ? fila[c.campo] : ''}">
+        </div>
+      `).join('');
+
+      document.getElementById('modal-box').innerHTML = `
+        <div class="modal-titulo">Editar registro — ${cfg.titulo}</div>
+        ${camposHtml}
+        <div class="modal-msg oculto" id="modal-msg"></div>
+        <div class="modal-btns">
+          <button class="btn-sm btn-sm-eliminar" onclick="eliminarRegistro('${bd}', ${id})">Eliminar</button>
+          <div class="modal-btns-der">
+            <button class="btn-sm btn-sm-cancelar" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-sm btn-sm-guardar" onclick="guardarEdicion('${bd}', ${id})">Guardar</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal-fondo').classList.remove('oculto');
+    }
+
+    function recogerDatosModal(bd) {
+      const cfg = CONFIG_BD[bd];
+      const datos = {};
+      cfg.camposEdicion.forEach(c => {
+        datos[c.campo] = document.getElementById('modal-campo-' + c.campo).value.trim();
+      });
+      return datos;
+    }
+
+    function mostrarMsgModal(texto, tipo) {
+      const msgEl = document.getElementById('modal-msg');
+      msgEl.textContent = texto;
+      msgEl.className = 'modal-msg ' + tipo;
+    }
+
+    async function recargarTrasOperacion(bd) {
+      if (bd === 'censo') {
+        // El censo no tiene listado fijo: si ya había una búsqueda
+        // activa, se refresca; si no, se deja como está.
+        const hayBusquedaPrevia = document.getElementById('buscar-dni') &&
+          (document.getElementById('buscar-dni').value.trim() ||
+           document.getElementById('buscar-nombre').value.trim() ||
+           document.getElementById('buscar-apellido1').value.trim() ||
+           document.getElementById('buscar-apellido2').value.trim());
+        if (hayBusquedaPrevia) await buscarCenso();
+      } else if (bd === 'candidaturas') {
+        // Recargar el desplegable (puede haber cambiado el conjunto de
+        // candidaturas) y mantener filtrada la que estuviera seleccionada.
+        const select = document.getElementById('select-candidatura');
+        const letraActiva = select ? select.value : '';
+        await cargarSelectorCandidaturas();
+        if (letraActiva) {
+          const nuevoSelect = document.getElementById('select-candidatura');
+          if (nuevoSelect && [...nuevoSelect.options].some(o => o.value === letraActiva)) {
+            nuevoSelect.value = letraActiva;
+            filtrarPorCandidatura(letraActiva);
+          }
+        }
+      } else {
+        await cargarListado(bd);
+      }
+    }
+
+    async function guardarNuevo(bd) {
+      const cfg = CONFIG_BD[bd];
+      const datos = recogerDatosModal(bd);
+      try {
+        const resp = await fetch(cfg.endpointBase, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const res = await resp.json();
+        if (res.ok) {
+          if (bd === 'candidaturas') {
+            // No se cierra el modal: se deja preparado para seguir
+            // insertando más integrantes de la misma candidatura sin
+            // tener que volver a abrirlo cada vez.
+            mostrarMsgModal('Registro creado correctamente. Puede añadir otro integrante.', 'ok');
+            limpiarCamposModalCandidaturas();
+            await recargarTrasOperacion(bd);
+          } else {
+            cerrarModal();
+            await recargarTrasOperacion(bd);
+          }
+        } else {
+          mostrarMsgModal(res.error || 'No se pudo crear el registro.', 'error');
+        }
+      } catch (e) {
+        mostrarMsgModal('Error de conexión: ' + e.message, 'error');
+      }
+    }
+
+    function limpiarCamposModalCandidaturas() {
+      // Vacía los campos editables (posición, tipo, nombre, apellidos)
+      // tras crear un candidato, manteniendo el partido bloqueado tal
+      // como estaba, para que el siguiente alta sea rápida.
+      const cfg = CONFIG_BD['candidaturas'];
+      cfg.camposEdicion.forEach(c => {
+        if (c.campo === 'candidatura') return; // se mantiene, no se toca
+        const input = document.getElementById('modal-campo-' + c.campo);
+        if (input) input.value = '';
+      });
+      const primerCampoLibre = cfg.camposEdicion.find(c => c.campo !== 'candidatura');
+      if (primerCampoLibre) {
+        const el = document.getElementById('modal-campo-' + primerCampoLibre.campo);
+        if (el) el.focus();
+      }
+    }
+
+    async function guardarEdicion(bd, id) {
+      const cfg = CONFIG_BD[bd];
+      const datos = recogerDatosModal(bd);
+      try {
+        const resp = await fetch(`${cfg.endpointBase}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const res = await resp.json();
+        if (res.ok) {
+          cerrarModal();
+          await recargarTrasOperacion(bd);
+        } else {
+          mostrarMsgModal(res.error || 'No se pudo guardar.', 'error');
+        }
+      } catch (e) {
+        mostrarMsgModal('Error de conexión: ' + e.message, 'error');
+      }
+    }
+
+    async function eliminarRegistro(bd, id) {
+      if (!confirm('¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.')) return;
+      const cfg = CONFIG_BD[bd];
+      try {
+        const resp = await fetch(`${cfg.endpointBase}/${id}`, { method: 'DELETE' });
+        const res = await resp.json();
+        if (res.ok) {
+          cerrarModal();
+          await recargarTrasOperacion(bd);
+        } else {
+          mostrarMsgModal(res.error || 'No se pudo eliminar.', 'error');
+        }
+      } catch (e) {
+        mostrarMsgModal('Error de conexión: ' + e.message, 'error');
+      }
+    }
+
+    document.getElementById('modal-fondo').addEventListener('click', function(e) {
+      if (e.target === this) cerrarModal();
+    });
+
+    // --- Cierre de sesión automático por inactividad (60 segundos) ---
+    let temporizadorInactividad = null;
+
+    function reiniciarTemporizadorInactividad() {
+      if (temporizadorInactividad) clearTimeout(temporizadorInactividad);
+      temporizadorInactividad = setTimeout(cerrarSesionPorInactividad, 60000);
+    }
+
+    async function cerrarSesionPorInactividad() {
+      try {
+        await fetch('/api/logout_admin', { method: 'POST' });
+      } catch (e) {
+        // Aunque falle la llamada al servidor, se redirige igualmente:
+        // lo importante es que la pantalla deje de mostrar datos de admin.
+      }
+      window.location.href = '/';
+    }
+
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evento => {
+      document.addEventListener(evento, reiniciarTemporizadorInactividad, { passive: true });
+    });
+    reiniciarTemporizadorInactividad();
+  </script>
+
 </body>
 </html>
-
 
