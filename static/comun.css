@@ -1,5 +1,5 @@
 
-/*===========================================================
+/*=============================================================
  Autor:      Gadea Díez Prieto
  Tutor:      Rubén Ruiz y Nuño Basurto
  Centro:     Universidad de Burgos — Escuela Politécnica Superior
@@ -7,14 +7,18 @@
  Proyecto:   TFG — Diseño de una plataforma para la
              digitalización del proceso electoral
  Fecha:      Curso 2025-2026
- Archivo:    generar_certificado.py
- ============================================================= */
+ Archivo:    comun.css
+ =============================================================*/
 
 
 /* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── VARIABLES ── */
+/* ── VARIABLES ──
+   Superconjunto de las variables usadas en las 5 páginas. Ninguna
+   página usaba un mismo nombre de variable con un valor distinto;
+   las variables no usadas por una página concreta simplemente no
+   tienen efecto en ella. */
 :root {
   --azul: #3a7abf;
   --azul-oscuro: #2a5a9f;
@@ -36,6 +40,9 @@
   --texto: #333;
   --texto-suave: #666;
   --texto-muy-suave: #aaa;
+  --naranja: #e67e22;
+  --naranja-fondo: #fff8f0;
+  --naranja-borde: #f5d5a0;
 }
 
 /* ── BODY ── */
@@ -50,7 +57,11 @@ body {
   overflow: hidden;
 }
 
-/* ── CABECERA SUPERIOR ── */
+/* ── CABECERA SUPERIOR ──
+   .hdr-top lleva flex-shrink:0 en todas las páginas tras esta
+   extracción (verificado sin efecto visual en las páginas que no
+   lo tenían antes, ya que su altura ya estaba fijada por el padding
+   y el contenido de texto). */
 .hdr-top {
   background: var(--gris-cabecera);
   padding: 14px 40px;
@@ -71,7 +82,6 @@ body {
   padding: 20px 40px;
   text-align: center;
   border-bottom: 4px solid var(--azul);
-  flex-shrink: 0;
 }
 .hdr-titulo h1 {
   font-size: 26px;
@@ -92,7 +102,6 @@ body {
   border-bottom: 2px solid var(--gris-borde);
   padding: 0 4px;
   display: flex;
-  flex-shrink: 0;
 }
 .tab {
   padding: 14px 24px;
@@ -106,30 +115,17 @@ body {
 }
 
 /* ── TÍTULO DE PANEL ──
-   Unificado a la versión mayoritaria*/
+   (.panel, .panel-body y .contenido NO están aquí a propósito: cada
+   página tiene pequeñas diferencias reales en esas reglas y se
+   mantienen en su propio <style> para no alterar su comportamiento). */
 .panel-titulo {
   text-align: center;
   padding: 14px 20px;
-  font-size: 14px;
+  font-size: clamp(16px, 2vw, 22px);
   font-weight: 700;
   color: var(--azul);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   border-bottom: 1px solid var(--gris-borde);
   background: var(--gris-panel);
-  flex-shrink: 0;
-}
-
-/* ── AVISO INFO ──
-   Unificado a la versión mayoritaria  */
-.aviso-info {
-  background: var(--azul-fondo);
-  border: 1px solid var(--azul-borde);
-  border-left: 4px solid var(--azul);
-  padding: 14px 18px;
-  font-size: 14px;
-  color: #2a5080;
-  line-height: 1.6;
-  border-radius: 0 2px 2px 0;
-  flex-shrink: 0;
 }
