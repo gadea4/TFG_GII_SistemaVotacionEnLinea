@@ -1,12 +1,14 @@
 
-# VERSIÓN: 3
-# FECHA: 29/03/2026
-# HORA: (actualizar al modificar)
-#
-# HISTORIAL:
-# v3 - Detección robusta del lector  y reintentos
-# v2 - Verifica solo la presencia del lector ACS ACR3901 ICC Reader 0
-# v1 - Versión inicial
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    test_lector.py
+# =============================================================
 
 
 import time
@@ -65,5 +67,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    
