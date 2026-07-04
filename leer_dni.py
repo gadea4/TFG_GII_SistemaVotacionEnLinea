@@ -1,8 +1,15 @@
 
-#autor: Gadea Díez Prieto
-# Script encargado de detectar el dni en el lector
+# =============================================================
+# Autor:      Gadea Díez Prieto
+# Tutor:      Rubén Ruiz y Nuño Basurto
+# Centro:     Universidad de Burgos — Escuela Politécnica Superior
+# Titulación: Grado en Ingeniería Informática
+# Proyecto:   TFG — Diseño de una plataforma para la
+#             digitalización del proceso electoral
+# Fecha:      Curso 2025-2026
+# Archivo:    leer_dni.py
+# =============================================================
 
-# Pregunta al sistema operativo que lectores hay conectados y devuelva una lista con ellos 
 
 import time
 from smartcard.System import readers
@@ -61,11 +68,6 @@ def detectar_dni():
         except Exception:
             pass
 
+
 if __name__ == "__main__":
     print(detectar_dni())
-
-
-
-
-
-
