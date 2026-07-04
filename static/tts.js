@@ -1,6 +1,7 @@
-
-// tts.js — Módulo de Text-to-Speech 
-
+// =========================================================
+// tts.js — Módulo de Text-to-Speech via servidor Flask
+// Sistema de Votación Electrónica — Universidad de Burgos
+// =========================================================
 
 const TTS = (function () {
 
@@ -48,7 +49,7 @@ const TTS = (function () {
 })();
 
 
-// ── Botón flotante de voz
+// ── Botón flotante de voz ─────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
   const btn = document.createElement('button');
   btn.id        = 'btn-tts';
@@ -77,4 +78,3 @@ document.addEventListener('DOMContentLoaded', function () {
   btn.onclick = () => TTS.toggle();
   document.body.appendChild(btn);
 });
-
