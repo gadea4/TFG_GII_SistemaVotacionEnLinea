@@ -1,5 +1,16 @@
-<!-- Autora: Gadea Diez Prieto-->
-<!--script generado para la parte de simulacion-->
+<!--
+  ===============================================================
+  Autor:      Gadea Díez Prieto
+  Tutor:      Rubén Ruiz y Nuño Basurto
+  Centro:     Universidad de Burgos — Escuela Politécnica Superior
+  Titulación: Grado en Ingeniería Informática
+  Proyecto:   TFG — Diseño de una plataforma para la
+              digitalización del proceso electoral
+  Fecha:      Curso 2025-2026
+  ---------------------------------------------------------------
+  Archivo:    0.simulacion.html
+  ===============================================================
+-->
 
 
 
@@ -11,8 +22,6 @@
   <title>Simulación Electoral — Sistema de Votación</title>
   <link rel="stylesheet" href="/static/comun.css">
   <style>
-
-
 /* ── CONTENIDO ── */
 .contenido {
   width: 100%;
@@ -318,8 +327,8 @@
     tick(); setInterval(tick, 1000);
 
     let filasOriginales = [];
-    let valoresModificados = {};
-    let colorPorPartido = {};
+    let valoresModificados = {}; // { id: nuevoValorVotos }
+    let colorPorPartido = {}; // { nombre del partido: color hex }
 
     async function cargarColoresPartidos() {
       try {
@@ -356,6 +365,10 @@
       }
     }
 
+    // toLocaleString('es-ES') no es fiable: algunos navegadores no añaden
+    // el separador de miles para números de 4 cifras (1.000-9.999). Esta
+    // función propia garantiza el punto de miles siempre, para cualquier
+    // cantidad de cifras.
     function formatoMiles(numero) {
       return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
@@ -377,8 +390,16 @@
     const UMBRAL_MINIMO_PORCENTAJE = 5;
 
     // Calcula el reparto de escaños mediante el sistema D'Hondt:
-    // votos validos primero, lugo se excluyn los de fuera del umbral y para cada partido se hacen los cocientes 
-
+    // 1. Se calcula el total de votos válidos (candidaturas + voto en
+    //    blanco, nunca los nulos) para determinar el umbral del 5%.
+    // 2. Se excluyen del reparto el voto en blanco y cualquier partido
+    //    que no alcance el 5% de los votos válidos (art. 180 LOREG).
+    // 3. Para cada partido que sigue en juego se generan los cocientes
+    //    votos/1, votos/2, votos/3... hasta el número de escaños a
+    //    repartir, y se toman los N cocientes más altos de entre todos
+    //    los partidos — cada cociente elegido es un escaño para ese
+    //    partido. En caso de empate exacto de cociente, gana el partido
+    //    con más votos totales (regla de desempate estándar).
     function calcularDhont(filas, totalEscanos) {
       const totalValidos = filas.reduce((suma, f) => suma + f.votos, 0);
 
@@ -449,9 +470,15 @@
     }
 
     function marcarModificado(id, input) {
+      // Se permiten dígitos y puntos de miles mientras se escribe; se
+      // quitan los puntos para sacar el valor numérico real.
       const soloDigitos = input.value.replace(/[^\d]/g, '');
       const nuevoValor = parseInt(soloDigitos || '0', 10);
 
+      // Reformatear con separador de miles (formato español) cada vez
+      // que cambia el contenido, manteniendo el cursor al final del
+      // campo — con números de pocas cifras el efecto es prácticamente
+      // imperceptible para el usuario.
       const formateado = formatoMiles(nuevoValor);
       if (input.value !== formateado) {
         input.value = formateado;
@@ -467,10 +494,19 @@
         input.classList.remove('modificado');
       }
 
+      // Recalcular porcentajes y reparto de escaños con los votos
+      // actuales (editados o no), sin volver a dibujar los campos de
+      // entrada — así el usuario puede seguir escribiendo sin que el
+      // cursor salte fuera del campo en cada pulsación.
       recalcularDerivados();
     }
 
     function recalcularDerivados() {
+      // Recalcula SIEMPRE, con cada pulsación: porcentajes y el aviso
+      // visual de partidos bajo el umbral del 5%. El reparto de escaños
+      // por la Ley d'Hont ya NO se recalcula aquí — solo se actualiza al
+      // pulsar el botón "Ley d'Hont", para que el usuario decida cuándo
+      // aplicar el cálculo sobre los votos que tenga en ese momento.
       const filasConVotosActuales = obtenerFilasConVotosActuales();
       const totalVotos = filasConVotosActuales.reduce((suma, f) => suma + f.votos, 0);
 
@@ -494,6 +530,9 @@
     }
 
     function obtenerFilasConVotosActuales() {
+      // Toma el valor actual de cada campo de votos en pantalla (editado
+      // o no), tanto para el recálculo automático de porcentajes como
+      // para el cálculo manual de la Ley d'Hont.
       return filasOriginales.map(f => {
         const valorEnPantalla = valoresModificados.hasOwnProperty(f.id)
           ? valoresModificados[f.id]
@@ -526,6 +565,8 @@
       dibujarHemiciclo(filasConVotosActuales, escanosSimulados);
     }
 
+    // Mismo algoritmo de dibujo que en 0.votacion.html: un único anillo
+    // segmentado, cada partido ocupa un arco proporcional a sus escaños.
     function generarPathHemiciclo(escanos, totalEscanos, radioExt, radioInt, cx, cy, anguloInicio) {
       const anguloPorEscano = Math.PI / totalEscanos;
       const anguloFin = anguloInicio - escanos * anguloPorEscano;
@@ -550,11 +591,15 @@
     function dibujarHemiciclo(filasConVotosActuales, escanosSimulados) {
       const cont = document.getElementById('hemiciclo-contenedor');
 
+      // Colores fijos solo para esta pantalla (no se tocan en la base de
+      // datos ni afectan al hemiciclo de 0.votacion.html). Se detectan
+      // por coincidencia de texto en el nombre del partido, así no hace
+      // falta conocer el nombre completo exacto.
       function colorFijoPorNombre(nombre) {
         const n = nombre.toUpperCase();
-        if (n.includes('SOCIALISTA') && !n.includes('LIBERAL')) return '#E30613';
-        if (n.includes('POPULAR')) return '#0056A3';
-        if (n === 'VOX' || n.includes('VOX')) return '#5AC035';
+        if (n.includes('SOCIALISTA') && !n.includes('LIBERAL')) return '#E30613'; // PSOE — rojo
+        if (n.includes('POPULAR')) return '#0056A3'; // PP — azul
+        if (n === 'VOX' || n.includes('VOX')) return '#5AC035'; // VOX — verde
         return null;
       }
 
@@ -609,6 +654,10 @@
     }
 
     function reiniciarSimulacion() {
+      // Descarta todos los cambios hechos en pantalla y vuelve a mostrar
+      // los datos reales originales: en los campos de votos, en los
+      // porcentajes y en el reparto de escaños simulado (recalculado con
+      // los votos reales, igual que al cargar la página por primera vez).
       valoresModificados = {};
 
       filasOriginales.forEach(fila => {
@@ -627,6 +676,7 @@
       await cargarSimulacion();
     });
 
+    // --- Cierre de sesión automático por inactividad (60 segundos) ---
     let temporizadorInactividad = null;
 
     function reiniciarTemporizadorInactividad() {
@@ -637,7 +687,10 @@
     async function cerrarSesionPorInactividad() {
       try {
         await fetch('/api/logout_admin', { method: 'POST' });
-      } catch (e) {}
+      } catch (e) {
+        // Aunque falle la llamada al servidor, se redirige igualmente:
+        // lo importante es que la pantalla deje de mostrar datos de admin.
+      }
       window.location.href = '/';
     }
 
@@ -649,4 +702,3 @@
 
 </body>
 </html>
-
