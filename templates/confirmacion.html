@@ -1,0 +1,244 @@
+<!--
+  ===============================================================
+  Autor:      Gadea Díez Prieto
+  Tutor:      Rubén Ruiz y Nuño Basurto
+  Centro:     Universidad de Burgos — Escuela Politécnica Superior
+  Titulación: Grado en Ingeniería Informática
+  Proyecto:   TFG — Diseño de una plataforma para la
+              digitalización del proceso electoral
+  Fecha:      Curso 2025-2026
+  Archivo:    confirmacion.html
+  ===============================================================
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun_votacion.css">
+  <style>
+
+    
+
+    
+    
+    .contenido {
+      width: 100%;
+      padding: 24px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .panel { background: var(--blanco); border: 1px solid #ccc; border-radius: 2px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    
+    .panel-body   { padding: 28px 36px; flex: 1; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+    /* Contenido confirmación */
+    .confirm-wrap {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-izq {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 480px;
+    }
+
+    .confirm-ok {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .confirm-ok-icono {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--verde);
+      color: white;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .confirm-ok-txt { font-size: 24px; font-weight: 700; color: var(--verde); }
+    .confirm-ok-sub { font-size: 14px; color: var(--texto-suave); margin-top: 4px; }
+
+    .confirm-datos {
+      background: var(--verde-fondo);
+      border: 1px solid var(--verde-borde);
+      border-left: 4px solid var(--verde);
+      border-radius: 0 2px 2px 0;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .confirm-dato-row { display: flex; gap: 12px; font-size: 13px; }
+    .confirm-dato-label { font-weight: 700; color: #1a5a35; min-width: 120px; }
+    .confirm-dato-val   { color: #1a5a35; }
+
+    .confirm-der {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .qr-titulo { font-size: 13px; font-weight: 700; color: var(--texto-suave); letter-spacing: 0.06em; text-transform: uppercase; }
+    .qr-img    { border: 1px solid var(--gris-borde); padding: 8px; background: white; }
+    .qr-codigo { font-size: 11px; color: var(--texto-suave); font-family: monospace; }
+
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--azul);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+      margin-top: 4px;
+    }
+    .btn-pdf:hover { background: var(--azul-oscuro); }
+
+  </style>
+</head>
+<body>
+
+  <div class="hdr-top">
+    <div class="hdr-top-izq">
+      <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
+    </div>
+    <div class="hdr-top-der">
+      <div class="hdr-hora" id="hora"></div>
+      <div class="hdr-dia"  id="dia"></div>
+    </div>
+  </div>
+
+  <div class="hdr-titulo">
+    <h1>Sistema de Votación Electrónica</h1>
+    <p id="fecha-hdr"></p>
+  </div>
+
+  <div class="contenido">
+
+    <div class="tabs">
+      <div class="tab">Paso 3 de 3 — Votación a candidaturas</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-titulo">Confirmación de voto</div>
+      <div class="panel-body">
+        <div class="confirm-wrap">
+
+          <!-- Izquierda: datos -->
+          <div class="confirm-izq">
+            <div class="confirm-ok">
+              <div class="confirm-ok-icono">✔</div>
+              <div>
+                <div class="confirm-ok-txt">Voto emitido correctamente</div>
+                <div class="confirm-ok-sub">Su voto ha sido registrado de forma segura y anónima</div>
+              </div>
+            </div>
+
+            <div class="confirm-datos">
+              <div class="confirm-dato-row">
+                <span class="confirm-dato-label">Votante</span>
+                <span class="confirm-dato-val" id="conf-nombre">—</span>
+              </div>
+              <div class="confirm-dato-row">
+                <span class="confirm-dato-label">DNI</span>
+                <span class="confirm-dato-val" id="conf-dni">—</span>
+              </div>
+              <div class="confirm-dato-row">
+                <span class="confirm-dato-label">Mesa electoral</span>
+                <span class="confirm-dato-val" id="conf-mesa">—</span>
+              </div>
+              <div class="confirm-dato-row">
+                <span class="confirm-dato-label">Fecha y hora</span>
+                <span class="confirm-dato-val" id="conf-fecha">—</span>
+              </div>
+              <div class="confirm-dato-row">
+                <span class="confirm-dato-label">Justificante nº</span>
+                <span class="confirm-dato-val" id="conf-codigo">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Derecha: QR -->
+          <div class="confirm-der">
+            <div class="qr-titulo">Certificado de voto</div>
+            <img class="qr-img" id="qr-img" src="" alt="Código QR" width="160" height="160">
+            <div class="qr-codigo" id="qr-codigo">—</div>
+            <a class="btn-pdf" id="btn-pdf" href="#" target="_blank">
+              📄 &nbsp;Descargar certificado PDF
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <strong>ℹ Información:</strong> Puede escanear el código QR con su móvil para descargar el certificado de voto. Gracias por participar.
+    </div>
+
+  </div>
+
+  <script src="/static/tts.js"></script>
+  <script>
+    function tick() {
+      const n = new Date();
+      document.getElementById('hora').textContent = n.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      const d = n.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('dia').textContent = d;
+      document.getElementById('fecha-hdr').textContent = d;
+    }
+    tick(); setInterval(tick, 1000);
+
+    // Cargar datos de confirmación
+    async function cargarConfirmacion() {
+      try {
+        const resp = await fetch('/api/confirmacion');
+        const datos = await resp.json();
+        if (!datos.ok) { window.location.href = '/'; return; }
+
+        document.getElementById('conf-nombre').textContent  = datos.nombre + ' ' + datos.apellidos;
+        document.getElementById('conf-dni').textContent     = datos.dni_oculto;
+        document.getElementById('conf-mesa').textContent    = `Dto. ${datos.distrito} · Secc. ${datos.seccion} · Mesa ${datos.mesa}`;
+        document.getElementById('conf-fecha').textContent   = datos.fecha_hora;
+        document.getElementById('conf-codigo').textContent  = datos.codigo;
+        document.getElementById('qr-img').src               = '/api/confirmacion/qr/' + datos.codigo;
+        document.getElementById('qr-codigo').textContent    = datos.codigo.substring(0, 16) + '...';
+        document.getElementById('btn-pdf').href             = '/confirmacion/justificante/' + datos.codigo;
+
+      } catch(e) {
+        console.error('Error cargando confirmación:', e);
+      }
+    }
+
+    window.addEventListener('load', function() {
+      cargarConfirmacion();
+      setTimeout(() => TTS.hablar(
+        'Su voto ha sido emitido correctamente. ' +
+        'Puede escanear el código QR con su móvil para descargar el certificado de voto. ' +
+        'Muchas gracias por participar.'
+      ), 1000);
+    });
+  </script>
+
+</body>
+</html>
