@@ -1,70 +1,26 @@
+<!--
+  ===============================================================
+  Autor:      Gadea Díez Prieto
+  Tutor:      Rubén Ruiz y Nuño Basurto
+  Centro:     Universidad de Burgos — Escuela Politécnica Superior
+  Titulación: Grado en Ingeniería Informática
+  Proyecto:   TFG — Diseño de una plataforma para la
+              digitalización del proceso electoral
+  Fecha:      Curso 2025-2026
+  Archivo:    pasos.html
+  ===============================================================
+-->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pasos — Sistema de Votación</title>
+  <link rel="stylesheet" href="/static/comun_votacion.css">
   <style>/* ── RESET ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --azul: #3a7abf;
-  --azul-oscuro: #2a5a9f;
-  --azul-fondo: #f0f6ff;
-  --azul-borde: #c0d8f0;
-  --gris-cabecera: #4a4a4a;
-  --gris-cabecera2: #5a5a5a;
-  --gris-borde: #ddd;
-  --gris-fondo: #e8e8e8;
-  --gris-panel: #f7f9fc;
-  --verde: #2e8b57;
-  --verde-fondo: #f0fff4;
-  --verde-borde: #a8d5b8;
-  --rojo: #c0392b;
-  --rojo-fondo: #fff5f5;
-  --rojo-borde: #f5b8b0;
-  --negro: #222;
-  --blanco: #fff;
-  --texto: #333;
-  --texto-suave: #666;
-  --texto-muy-suave: #aaa;
-}
-
-body {
-  font-family: Arial, 'Helvetica Neue', sans-serif;
-  background: var(--gris-fondo);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--texto);
-  font-size: 16px;
-  overflow: hidden;
-}
 
 /* CABECERA */
-.hdr-top {
-  background: var(--gris-cabecera);
-  padding: 14px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
-.hdr-top-izq { display: flex; align-items: center; gap: 14px; }
-.hdr-escudo { font-size: 34px; }
-.hdr-top-txt { font-size: 16px; color: rgba(255,255,255,0.85); letter-spacing: 0.02em; }
-.hdr-top-der { display: flex; flex-direction: column; align-items: flex-end; }
-.hdr-hora { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.85); font-variant-numeric: tabular-nums; line-height: 1.2; }
-.hdr-dia { font-size: 13px; color: rgba(255,255,255,0.45); }
-
-.hdr-titulo {
-  background: var(--gris-cabecera2);
-  padding: 20px 40px;
-  text-align: center;
-  border-bottom: 4px solid var(--azul);
-  flex-shrink: 0;
-}
-.hdr-titulo h1 { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; }
-.hdr-titulo p { font-size: 15px; color: rgba(255,255,255,0.65); }
 
 /* CONTENIDO */
 .contenido {
@@ -77,14 +33,13 @@ body {
   overflow: auto;
 }
 
-/* TABS */
-.tabs { background: var(--blanco); border-bottom: 2px solid var(--gris-borde); padding: 0 4px; display: flex; flex-shrink: 0; }
-.tab { padding: 14px 24px; font-size: 14px; font-weight: 700; color: var(--azul); border-bottom: 3px solid var(--azul); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: -2px; }
 
 /* PANEL */
 .panel { background: var(--blanco); border: 1px solid #ccc; border-radius: 2px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.panel-titulo { text-align: center; padding: 14px 20px; font-size: 14px; font-weight: 700; color: var(--azul); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--gris-borde); background: var(--gris-panel); flex-shrink: 0; }
-.panel-body { padding: 28px 36px; flex: 1; overflow: auto; display: flex; flex-direction: column; justify-content: center; }
+
+.panel-body { padding: 28px 36px; flex: 1; overflow: auto; position: relative; display: flex; flex-direction: column; gap: 12px; }
+.panel-body-fila { display: flex; justify-content: center; align-items: flex-start; flex: 1; min-height: 0; margin-top: 15px; }
+.panel-body-izq { flex: 0 0 400px; max-width: 400px; min-width: 0; }
 
 /* INSTRUCCION */
 .instruccion { font-size: 15px; color: #444; line-height: 1.6; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid #eee; }
@@ -121,7 +76,7 @@ body {
 .btn-verde:hover { background: #1f6b42; }
 
 /* AVISOS */
-.aviso-info { background: var(--azul-fondo); border: 1px solid var(--azul-borde); border-left: 4px solid var(--azul); padding: 14px 18px; font-size: 14px; color: #2a5080; line-height: 1.6; border-radius: 0 2px 2px 0; flex-shrink: 0; }
+
 .aviso-ok { background: var(--verde-fondo); border: 1px solid var(--verde-borde); border-left: 4px solid var(--verde); padding: 22px 24px; font-size: 16px; color: #1a5a35; line-height: 1.6; border-radius: 0 2px 2px 0; display: flex; flex-direction: column; gap: 16px; }
 .aviso-ok-titulo { font-size: 20px; font-weight: 700; }
 .aviso-error { background: var(--rojo-fondo); border: 1px solid var(--rojo-borde); border-left: 4px solid var(--rojo); padding: 22px 24px; font-size: 16px; color: #7a1a0a; line-height: 1.6; border-radius: 0 2px 2px 0; display: flex; flex-direction: column; gap: 16px; }
@@ -142,13 +97,13 @@ body {
 .animar { animation: aparecer 0.3s ease both; }
 </style>
   <style>
-    .pasos-lista { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: 2px; overflow: hidden; margin-bottom: 28px; width: fit-content; min-width: 400px; margin-left: calc(50% - 200px); margin-right: auto; }
+    .pasos-lista { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: 2px; overflow: hidden; margin-bottom: 0; width: 100%; }
 
     .paso-item {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 22px 24px;
+      gap: 0;
+      padding: 0 24px;
       border-bottom: 1px solid #eee;
     }
     .paso-item:last-child { border-bottom: none; }
@@ -158,9 +113,9 @@ body {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0;
+      width: 50px;
       flex-shrink: 0;
-      align-self: center;
+      padding: 22px 0;
     }
     .paso-num {
       width: 50px; height: 50px;
@@ -177,29 +132,55 @@ body {
     }
     .paso-item:last-child .paso-conector { display: none; }
 
-    .paso-txt { flex: 1; padding-top: 0; display: flex; align-items: center; }
+    .paso-txt { flex: 1; padding: 22px 0 22px 16px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; }
     .paso-titulo { font-size: 20px; font-weight: 700; color: var(--negro); margin-bottom: 6px; }
     .paso-desc { font-size: 15px; color: var(--texto-suave); line-height: 1.5; }
 
     .zona-boton {
       display: flex;
-      justify-content: center;
-      padding-top: calc(16px + 5.5cm);
-      padding-left: 25cm;
+      justify-content: flex-end;
+      flex-shrink: 0;
     }
     .zona-boton .btn-primario {
-      padding: 10px 28px;
-      font-size: 14px;
+      padding: 10px 32px;
+      font-size: 13px;
       text-transform: none;
+      width: 180.16px;
+      justify-content: center;
     }
     .instruccion { text-align: center; }
+
+    /* ── RESPONSIVE: TABLET (768px - 1024px) ── */
+    @media (max-width: 1024px) {
+      .hdr-top { padding: 10px 24px; }
+      .hdr-top-txt { font-size: 13px; }
+      .hdr-titulo { padding: 14px 24px; }
+      .hdr-titulo h1 { font-size: 20px; }
+      .contenido { padding: 16px 20px; }
+      .panel-body-izq { flex: 0 0 320px; max-width: 320px; min-width: 0; }
+      .panel-body-fila { margin-top: 0; flex: 1; min-height: 0; overflow-y: auto; }
+      .paso-item { padding: 16px 18px; gap: 12px; }
+      .paso-num { width: 42px; height: 42px; font-size: 17px; }
+      .paso-titulo { font-size: 17px; }
+      .paso-desc { font-size: 13px; }
+    }
+
+    /* ── RESPONSIVE: MÓVIL (max 767px) ── */
+    @media (max-width: 767px) {
+      .hdr-top { flex-direction: column; gap: 8px; padding: 10px 16px; align-items: center; }
+      .hdr-titulo h1 { font-size: 17px; }
+      .panel-body-fila { flex-direction: column; overflow-y: auto; }
+      .panel-body-izq { flex: 0 1 auto; max-width: 100%; width: 100%; min-height: 0; }
+      .paso-item { flex-direction: column; text-align: center; gap: 8px; padding: 14px; }
+      .zona-boton { justify-content: center; }
+      .aviso-info { font-size: 13px; padding: 12px 16px; }
+    }
   </style>
 </head>
 <body>
 
   <div class="hdr-top">
     <div class="hdr-top-izq">
-      <div class="hdr-escudo">🎓</div>
       <div class="hdr-top-txt">Universidad de Burgos &nbsp;·&nbsp; Grado en Ingeniería Informática</div>
     </div>
     <div class="hdr-top-der">
@@ -222,6 +203,9 @@ body {
     <div class="panel">
       <div class="panel-titulo">Pasos del proceso</div>
       <div class="panel-body">
+
+        <div class="panel-body-fila">
+        <div class="panel-body-izq">
 
 <div class="pasos-lista">
 
@@ -257,8 +241,11 @@ body {
 
         </div>
 
+        </div>
+        </div>
+
         <div class="zona-boton">
-          <a href="/dni" class="btn-primario">▶ &nbsp;Siguiente</a>
+          <a href="/dni" class="btn-primario" onclick="clearInterval(intervaloTTS); TTS.cancelar();">▶ &nbsp;Siguiente</a>
         </div>
 
       </div>
@@ -270,6 +257,7 @@ body {
 
   </div>
 
+  <script src="/static/tts.js"></script>
 
   <script>
     function tick() {
@@ -279,8 +267,22 @@ body {
       document.getElementById('dia').textContent = d;
       document.getElementById('fecha-hdr').textContent = d;
     }
-  tick(); setInterval(tick,1000); 
+    tick(); setInterval(tick, 1000);
+
+    // TTS — explicación de los pasos al cargar y cada 10 segundos
+    const mensajePasos =
+      'El proceso consta de los siguientes pasos. ' +
+      'Paso 1. Identificación del votante mediante su DNI con certificado digital. ' +
+      'Paso 2. Validación del derecho a voto. ' +
+      'Paso 3. Votación a candidaturas. ' +
+      'Pulse siguiente para iniciar el proceso.';
+
+    let intervaloTTS;
+    window.addEventListener('load', function () {
+      setTimeout(() => TTS.hablar(mensajePasos), 1000);
+      intervaloTTS = setInterval(() => TTS.hablar(mensajePasos), 10000);
+    });
   </script>
+
 </body>
 </html>
-
