@@ -1,5 +1,18 @@
-<!-- Autora: Gadea Diez Prieto-->
-<!--script generado para la parte de votacion-->
+<!--
+  ===============================================================
+  Autor:      Gadea Díez Prieto
+  Tutor:      Rubén Ruiz y Nuño Basurto
+  Centro:     Universidad de Burgos — Escuela Politécnica Superior
+  Titulación: Grado en Ingeniería Informática
+  Proyecto:   TFG — Diseño de una plataforma para la
+              digitalización del proceso electoral
+  Fecha:      Curso 2025-2026
+  ---------------------------------------------------------------
+  Archivo:     0.votacion.html
+  ===============================================================
+-->
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -297,6 +310,7 @@
       <a href="/admin_panel" style="font-size:11px; color:rgba(0,0,0,0.75); text-decoration:none; letter-spacing:0.04em; padding:0 16px;">← Volver al panel</a>
     </div>
 
+
     <div class="panel">
       <div class="panel-titulo">Gestión de la votación</div>
       <div class="panel-body">
@@ -401,7 +415,7 @@
         </div>
         <div class="modal-titulo" id="modal-confirm-titulo">Confirmar acción</div>
       </div>
-      <div class="modal-sub" id="modal-confirm-sub">¿Está seguro de que desea realizar esta acción?</div>
+      <div class="modal-sub"   id="modal-confirm-sub">¿Está seguro de que desea realizar esta acción?</div>
       <label class="modal-check-extra">
         <input type="checkbox" id="modal-confirm-checkbox" onchange="actualizarBotonConfirmarVotacion()">
         Sí, quiero resetear todos los votos
@@ -425,6 +439,10 @@
     }
     tick(); setInterval(tick, 1000);
 
+    // toLocaleString('es-ES') no es fiable: algunos navegadores no añaden
+    // el separador de miles para números de 4 cifras (1.000-9.999). Esta
+    // función propia garantiza el punto de miles siempre, para cualquier
+    // cantidad de cifras.
     function formatoMiles(numero) {
       return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
@@ -440,11 +458,15 @@
         document.getElementById('stat-participacion').textContent = datos.participacion + '%';
         document.getElementById('stat-pendientes').textContent   = formatoMiles(datos.total - datos.votados);
 
+        // Votos en blanco y nulos: vienen mezclados con el resto de
+        // candidaturas dentro de "resultados", agrupados por el nombre
+        // exacto que usa seleccion_partidos.html al emitir el voto.
         const filaBlanco = datos.resultados.find(r => r.candidatura === 'Voto en blanco');
         const filaNulo   = datos.resultados.find(r => r.candidatura === 'Voto nulo');
         document.getElementById('stat-blancos').textContent = formatoMiles(filaBlanco ? filaBlanco.votos : 0);
         document.getElementById('stat-nulos').textContent   = formatoMiles(filaNulo ? filaNulo.votos : 0);
 
+        // Tabla de resultados
         const tbody = document.getElementById('tabla-resultados-body');
         if (datos.resultados.length === 0) {
           tbody.innerHTML = '<tr><td colspan="3" style="color:#999;text-align:center;padding:20px;">No hay votos registrados aún.</td></tr>';
@@ -506,6 +528,10 @@
     const TOTAL_CONCEJALES_BURGOS = 27;
     const UMBRAL_MINIMO_PORCENTAJE = 5;
 
+    // Mismo algoritmo d'Hont que en la pantalla de Simulación: genera
+    // los cocientes votos/1, votos/2... de cada candidatura que supere
+    // el umbral del 5% sobre el total de votos en vivo, y asigna un
+    // escaño a cada uno de los N cocientes más altos.
     function calcularDhontEnVivo(candidaturas, totalEscanos) {
       const totalValidos = candidaturas.reduce((suma, c) => suma + c.votos, 0);
       const enJuego = candidaturas.filter(c => {
@@ -565,6 +591,8 @@
           return;
         }
 
+        // Excluir voto en blanco y nulo del reparto de escaños: solo
+        // compiten las candidaturas reales por la representación.
         const candidaturas = datosEstad.resultados.filter(r =>
           r.candidatura !== 'Voto en blanco' && r.candidatura !== 'Voto nulo'
         );
@@ -576,6 +604,7 @@
 
         const escanosPorCandidatura = calcularDhontEnVivo(candidaturas, TOTAL_CONCEJALES_BURGOS);
 
+        // Mapa nombre de partido -> color real, desde la BD de partidos
         const colorPorNombre = {};
         if (datosPartidos.ok) {
           datosPartidos.filas.forEach(p => { colorPorNombre[p.nombre] = p.color; });
@@ -583,6 +612,9 @@
         const coloresReserva = ['#999999', '#777777', '#555555', '#333333'];
         let indiceReserva = 0;
 
+        // Solo se dibujan las candidaturas con al menos 1 escaño,
+        // ordenadas de más a menos para que el hemiciclo se lea de
+        // izquierda (más escaños) a derecha, como es habitual.
         const conEscanos = candidaturas
           .map(c => ({ nombre: c.candidatura, escanos: escanosPorCandidatura[c.candidatura] || 0 }))
           .filter(c => c.escanos > 0)
@@ -633,9 +665,11 @@
       }
     }
 
+    // Cargar estadísticas al arrancar
     window.addEventListener('load', cargarEstadisticas);
     window.addEventListener('load', cargarHemiciclo);
 
+    // --- Cierre de sesión automático por inactividad (60 segundos) ---
     let temporizadorInactividad = null;
 
     function reiniciarTemporizadorInactividad() {
@@ -646,7 +680,10 @@
     async function cerrarSesionPorInactividad() {
       try {
         await fetch('/api/logout_admin', { method: 'POST' });
-      } catch (e) {}
+      } catch (e) {
+        // Aunque falle la llamada al servidor, se redirige igualmente:
+        // lo importante es que la pantalla deje de mostrar datos de admin.
+      }
       window.location.href = '/';
     }
 
