@@ -1,3 +1,5 @@
 Para la correcta ejecución y validación del Trabajo de Fin de Grado, es necesario disponer de un lector de DNI electrónico.
 En aquellos casos en los que no se disponga de un lector de DNI, se proporcionan vídeos demostrativos que permiten visualizar el funcionamiento de la aplicación y verificar las funcionalidades implementadas.
-Además con el objetivo de facilitar la prueba del programa, se adjunta un .exe para el que hay que tener instalado pithon para su correcto funcionamiento
+Además con el objetivo de facilitar la prueba del programa, se adjunta un .exe para el que hay que tener instalado pithon para su correcto funcionamiento. 
+
+En el panel de administrador, el usuario es admin y la contraseña gade1500
